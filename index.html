@@ -387,7 +387,7 @@
   <div class="shell">
     <section class="hero">
       <h1>Lab Package Finder</h1>
-      <p>واجهة عربية بسيطة للموظف: اقتراحات بحث فورية، تحاليل تحت بعض، مقارنة البكدجات في نفس التاب، وتاب مستقل للتسعير فقط.</p>
+      <p></p>
     </section>
 
     <div id="error" class="error" style="display:none"></div>
@@ -551,13 +551,13 @@
     };
 
     function normalizeText(value) {
-      return String(value || '')
-        .toUpperCase()
-        .trim()
-        .replace(/[\s\-_()/.,]+/g, ' ')
-        .replace(/[^A-Z0-9 ]/g, '')
-        .replace(/\s+/g, ' ');
-    }
+  return String(value || "")
+    .trim()
+    .replace(/[\s\-_()/.,]+/g, " ")
+    .replace(/[^\u0600-\u06FFa-zA-Z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
 
     function canonicalize(value) {
       const text = normalizeText(value);
