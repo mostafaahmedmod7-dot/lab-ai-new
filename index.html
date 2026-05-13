@@ -1,756 +1,1324 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lab Package Finder</title>
-  <style>
-    :root{
-      --bg:#f5f8fc;
-      --card:#ffffff;
-      --text:#102033;
-      --muted:#6b7280;
-      --primary:#2563eb;
-      --primary2:#0f766e;
-      --line:#e5e7eb;
-      --shadow:0 14px 32px rgba(15,23,42,.08);
-      --radius:20px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 28%),
-        radial-gradient(circle at top right, rgba(15,118,110,.10), transparent 28%),
-        var(--bg);
-      color:var(--text);
-    }
-    .shell{max-width:1280px;margin:0 auto;padding:20px}
-    .hero{
-      background:linear-gradient(135deg,#1d4ed8 0%,#0f766e 100%);
-      color:#fff;
-      border-radius:24px;
-      padding:22px;
-      box-shadow:var(--shadow);
-    }
-    .hero h1{margin:0 0 8px;font-size:clamp(24px,3vw,38px);line-height:1.2}
-    .hero p{margin:0;opacity:.95;max-width:900px;line-height:1.7}
-    .tabs{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin:16px 0 18px;
-    }
-    .tab{
-      border:1px solid var(--line);
-      background:#fff;
-      padding:12px 18px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:800;
-      min-width:180px;
-      box-shadow:0 6px 16px rgba(15,23,42,.04);
-    }
-    .tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-    .panel{
-      background:rgba(255,255,255,.94);
-      border:1px solid rgba(255,255,255,.6);
-      backdrop-filter:blur(10px);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 10px 20px rgba(15,23,42,.04);
-    }
-    h2,h3{margin:0 0 12px}
-    .search-wrap{position:relative}
-    .input{
-      width:100%;
-      border:1px solid #cfd7e3;
-      border-radius:16px;
-      padding:14px 14px;
-      font-size:15px;
-      outline:none;
-      background:#fff;
-      transition:.18s ease;
-    }
-    .input:focus{
-      border-color:rgba(37,99,235,.75);
-      box-shadow:0 0 0 4px rgba(37,99,235,.10);
-    }
-    .search-input{min-height:54px}
-    .suggestions{
-      position:absolute;
-      top:calc(100% + 8px);
-      left:0;right:0;
-      z-index:50;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      max-height:300px;
-      overflow-y:auto;
-    }
-    .suggestion{
-      width:100%;
-      border:0;
-      background:#fff;
-      padding:12px 14px;
-      cursor:pointer;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      text-align:right;
-      border-bottom:1px solid #f1f5f9;
-    }
-    .suggestion:hover{background:#f8fafc}
-    .suggestion:last-child{border-bottom:none}
-    .s-name{font-weight:800}
-    .s-sub{font-size:13px;color:var(--muted);white-space:nowrap}
-    .chips{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      margin-top:14px;
-    }
-    .chip-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:12px 14px;
-      border:1px solid #dbeafe;
-      background:#eff6ff;
-      border-radius:14px;
-      font-weight:800;
-    }
-    .chip-row button{
-      border:0;
-      background:#ef4444;
-      color:#fff;
-      padding:8px 12px;
-      border-radius:10px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-    }
-    .btn{
-      border:0;
-      border-radius:14px;
-      padding:12px 16px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .btn.primary{background:var(--primary);color:#fff}
-    .btn.secondary{background:#e5e7eb;color:#111827}
-    .hint,.muted{color:var(--muted);font-size:14px;line-height:1.7}
-    .summary{
-      margin-top:14px;
-      padding:14px;
-      border-radius:14px;
-      background:#f8fafc;
-      border:1px solid var(--line);
-    }
-    .summary-title{font-weight:900;margin-bottom:6px}
-    .rec-list{
-      display:grid;
-      gap:12px;
-      margin-top:14px;
-    }
-    .rec-item{
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:#fff;
-      padding:14px;
-    }
-    .rec-top{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      margin-bottom:10px;
-    }
-    .pkg-name{font-size:17px;font-weight:900}
-    .pkg-price{font-weight:900;color:#0f766e;white-space:nowrap}
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      padding:7px 10px;
-      border-radius:999px;
-      font-size:13px;
-      font-weight:900;
-      margin-top:6px;
-    }
-    .green{background:#dcfce7;color:#166534}
-    .blue{background:#dbeafe;color:#1d4ed8}
-    .orange{background:#ffedd5;color:#c2410c}
-    .list{margin:10px 0 0;padding-inline-start:22px}
-    .list li{margin-bottom:6px}
-    .empty{
-      padding:14px;
-      border-radius:14px;
-      background:#f9fafb;
-      color:var(--muted);
-      border:1px dashed #d1d5db;
-    }
-    .pricing-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:16px;
-    }
-    .price-list{
-      display:grid;
-      gap:10px;
-      max-height:560px;
-      overflow:auto;
-      padding-right:4px;
-    }
-    .price-row{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px 14px;
-      background:#fff;
-    }
-    .search-inline{display:grid;gap:10px;margin-bottom:12px}
-    .small-note{font-size:13px;color:var(--muted)}
-    .error{
-      background:#fee2e2;
-      color:#991b1b;
-      border:1px solid #fecaca;
-      padding:12px 14px;
-      border-radius:14px;
-      margin:14px 0;
-    }
-    @media (max-width: 960px){
-      .grid,.pricing-grid{grid-template-columns:1fr}
-      .tab{min-width:0;flex:1}
-      .hero h1{font-size:25px}
-      .suggestion{flex-direction:column;align-items:flex-start}
-      .rec-top{flex-direction:column}
-    }
-  </style>
+
+<meta charset="UTF-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>MOZMEN LAB SYSTEM</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f3f6fb;
+  color:#111827;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:260px;
+  background:#111827;
+  color:#fff;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:900;
+  margin-bottom:20px;
+}
+
+.tab-btn{
+  border:none;
+  background:#1f2937;
+  color:#fff;
+  padding:14px;
+  border-radius:14px;
+  text-align:right;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:700;
+  transition:.2s;
+}
+
+.tab-btn:hover{
+  background:#2563eb;
+}
+
+.tab-btn.active{
+  background:#2563eb;
+}
+
+/* CONTENT */
+
+.content{
+  flex:1;
+  padding:20px;
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.active{
+  display:block;
+}
+
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
+  margin-bottom:20px;
+}
+
+h1,h2{
+  margin-bottom:12px;
+}
+
+p{
+  color:#6b7280;
+  margin-bottom:20px;
+  line-height:1.7;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  font-size:16px;
+  outline:none;
+}
+
+input:focus,
+textarea:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+.results{
+  margin-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.item{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+}
+
+.item:hover{
+  background:#eff6ff;
+}
+
+.price{
+  color:#059669;
+  font-weight:900;
+}
+
+.selected-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.selected-item{
+  background:#eff6ff;
+  border:1px solid #dbeafe;
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.remove-btn{
+  border:none;
+  background:#fee2e2;
+  color:#b91c1c;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+button.main-btn{
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  padding:14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:800;
+  margin-top:14px;
+}
+
+button.dark{
+  background:#111827;
+}
+
+button.green{
+  background:#059669;
+}
+
+.empty{
+  text-align:center;
+  padding:20px;
+  color:#6b7280;
+  border:1px dashed #d1d5db;
+  border-radius:14px;
+}
+
+.compare-item{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:12px;
+}
+
+.compare-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.percent{
+  background:#dbeafe;
+  color:#1d4ed8;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:900;
+}
+
+.green-percent{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.orange-percent{
+  background:#ffedd5;
+  color:#c2410c;
+}
+
+textarea{
+  min-height:140px;
+}
+
+.totals{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+  margin-top:20px;
+}
+
+.box{
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:14px;
+}
+
+.box span{
+  display:block;
+  color:#6b7280;
+  margin-bottom:6px;
+  font-size:13px;
+}
+
+.box strong{
+  font-size:22px;
+}
+
+.green-text{
+  color:#059669;
+}
+
+@media(max-width:900px){
+
+  .layout{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+    flex-direction:row;
+    overflow:auto;
+  }
+
+}
+
+</style>
+
 </head>
+
 <body>
-  <div class="shell">
-    <section class="hero">
-      <h1>Lab Package Finder</h1>
-      <p>واجهة بسيطة للموظف: اقتراحات بحث فورية، اختيار التحاليل تحت بعض، مقارنة البكدجات في نفس التاب، وتاب مستقل للتسعير فقط.</p>
-    </section>
 
-    <div id="error" class="error" style="display:none"></div>
+<div class="layout">
 
-    <div class="tabs">
-      <button class="tab active" data-tab="compare">التحاليل + المقارنة</button>
-      <button class="tab" data-tab="pricing">التسعير</button>
+  <!-- SIDEBAR -->
+
+  <div class="sidebar">
+
+    <div class="logo">
+      MOZMEN LAB
     </div>
 
-    <section id="tab-compare" class="panel">
-      <div class="grid">
-        <div class="card">
-          <h2>أضف التحاليل</h2>
-          <div class="search-wrap">
-            <input id="searchInput" class="input search-input" type="text" placeholder="اكتب أول حرف أو أكثر..." autocomplete="off" />
-            <div id="suggestions" class="suggestions" style="display:none"></div>
-          </div>
+    <button class="tab-btn active" data-tab="pricingTab">
+      💰 التسعير
+    </button>
 
-          <div id="selectedStack" class="chips"></div>
+    <button class="tab-btn" data-tab="compareTab">
+      📦 مقارنة الباقات
+    </button>
 
-          <div class="actions">
-            <button id="compareBtn" class="btn primary">مقارنة البكدجات</button>
-            <button id="clearBtn" class="btn secondary">مسح الكل</button>
-          </div>
-
-          <div class="hint">أول حرف كفاية لظهور الاقتراحات. التحاليل المختارة تظهر تحت بعض بشكل واضح.</div>
-
-          <div class="summary">
-            <div class="summary-title">التحاليل الحالية</div>
-            <div id="currentSummary" class="muted">لا توجد تحاليل مدخلة</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>أفضل البكدجات</h2>
-          <div id="recContainer" class="rec-list">
-            <div class="empty">اضف التحاليل ثم اضغط مقارنة البكدجات.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-pricing" class="panel" style="display:none">
-      <h2>التسعير</h2>
-      <div class="pricing-grid">
-        <div class="card">
-          <h3>التحاليل</h3>
-          <div class="search-inline">
-            <input id="pricingTestsSearch" class="input search-input" type="text" placeholder="فلتر التحاليل..." />
-            <div class="small-note">اكتب اسم التحليل أو جزء منه.</div>
-          </div>
-          <div id="testsPriceList" class="price-list"></div>
-        </div>
-
-        <div class="card">
-          <h3>البكدجات</h3>
-          <div class="search-inline">
-            <input id="pricingPackagesSearch" class="input search-input" type="text" placeholder="فلتر البكدجات..." />
-            <div class="small-note">اكتب اسم البكدج أو جزء منه.</div>
-          </div>
-          <div id="packagesPriceList" class="price-list"></div>
-        </div>
-      </div>
-    </section>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    const SUPABASE_URL = 'https://ezawuhkjdghyfekoezbq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo';
+  <!-- CONTENT -->
 
-    let TESTS = [];
-    let PACKAGES = [];
-    let PACKAGE_TESTS = [];
+  <div class="content">
 
-    const ALIASES = {
-      ESR: ['ESR', 'SEDIMENTATION', 'SED RATE'],
-      TSH: ['TSH', 'THYROID STIMULATING HORMONE'],
-      UREA: ['UREA', 'BUN'],
-      CREATININE: ['CREAT', 'CREATININE', 'CREA', 'CRE'],
-      CREAT: ['CREAT', 'CREATININE', 'CREA', 'CRE'],
-      CBC: ['CBC', 'COMPLETE BLOOD COUNT'],
-      HBA1C: ['HBA1C', 'HB A1C', 'GLYCATED HEMOGLOBIN'],
-      FBS: ['FBS', 'FASTING BLOOD SUGAR'],
-      RBS: ['RBS', 'RANDOM BLOOD SUGAR'],
-      CRP: ['CRP', 'C REACTIVE PROTEIN', 'C-REACTIVE PROTEIN'],
-      URIC_ACID: ['URIC ACID', 'URIC'],
-      VITAMIN_D: ['VIT D', 'VITD', 'VITAMIN D', '25OH VITAMIN D'],
-      B12: ['B12', 'VITAMIN B12'],
-      ALT: ['ALT', 'GPT'],
-      AST: ['AST', 'GOT'],
-      LDL: ['LDL'],
-      HDL: ['HDL'],
-      TG: ['TG', 'TRIGLYCERIDES'],
-      CHOLESTEROL: ['CHOLESTEROL', 'TOTAL CHOLESTEROL'],
-      FERRITIN: ['FERRITIN'],
-      IRON: ['IRON'],
-      CALCIUM: ['CALCIUM'],
-      SODIUM: ['SODIUM', 'NA'],
-      POTASSIUM: ['POTASSIUM', 'K'],
-    };
+    <!-- PRICING -->
 
-    const state = {
-      activeTab: 'compare',
-      query: '',
-      selectedTests: ['ESR', 'TSH', 'UREA', 'CREAT'],
-      showSuggestions: false,
-      recommendations: [],
-    };
+    <div class="tab-content active" id="pricingTab">
 
-    const el = {
-      error: document.getElementById('error'),
-      tabs: [...document.querySelectorAll('.tab')],
-      tabCompare: document.getElementById('tab-compare'),
-      tabPricing: document.getElementById('tab-pricing'),
-      searchInput: document.getElementById('searchInput'),
-      suggestions: document.getElementById('suggestions'),
-      selectedStack: document.getElementById('selectedStack'),
-      compareBtn: document.getElementById('compareBtn'),
-      clearBtn: document.getElementById('clearBtn'),
-      currentSummary: document.getElementById('currentSummary'),
-      recContainer: document.getElementById('recContainer'),
-      pricingTestsSearch: document.getElementById('pricingTestsSearch'),
-      pricingPackagesSearch: document.getElementById('pricingPackagesSearch'),
-      testsPriceList: document.getElementById('testsPriceList'),
-      packagesPriceList: document.getElementById('packagesPriceList'),
-    };
+      <div class="card">
 
-    function setError(msg) {
-      if (!msg) {
-        el.error.style.display = 'none';
-        el.error.textContent = '';
-        return;
-      }
-      el.error.style.display = 'block';
-      el.error.textContent = msg;
-    }
+        <h1>تسعير التحاليل</h1>
 
-    function normalizeText(value) {
-      return String(value || '')
-        .trim()
-        .replace(/[\s\-_()/.,]+/g, ' ')
-        .replace(/[^\u0600-\u06FFa-zA-Z0-9 ]/g, '')
-        .replace(/\s+/g, ' ')
-        .toUpperCase();
-    }
+        <p>
+          ابحث عن التحليل واضغط عليه للإضافة
+        </p>
 
-    function canonicalize(value) {
-      const text = normalizeText(value);
-      if (!text) return '';
-      for (const [canonical, aliases] of Object.entries(ALIASES)) {
-        if (aliases.some((alias) => text.includes(normalizeText(alias)))) {
-          return canonical;
-        }
-      }
-      return text;
-    }
+        <input
+          type="text"
+          id="search"
+          placeholder="ابحث عن تحليل..."
+          autocomplete="off"
+        />
 
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
+        <div id="results" class="results">
 
-    function escapeAttr(str) {
-      return escapeHtml(str).replace(/`/g, '&#96;');
-    }
+          <div class="empty">
+            ابدأ بكتابة اسم التحليل
+          </div>
 
-    function parseRequestedTests(input) {
-      return Array.from(new Set(
-        String(input || '')
-          .split(/[\n,]+/g)
-          .map((x) => x.trim())
-          .filter(Boolean)
-          .map(canonicalize)
-          .filter(Boolean)
-      ));
-    }
-
-    function switchTab(tab) {
-      state.activeTab = tab;
-      el.tabs.forEach((btn) => btn.classList.toggle('active', btn.dataset.tab === tab));
-      el.tabCompare.style.display = tab === 'compare' ? 'block' : 'none';
-      el.tabPricing.style.display = tab === 'pricing' ? 'block' : 'none';
-    }
-
-    function getTestMap() {
-      return new Map(TESTS.map((t) => [Number(t.id), { ...t, canonical: canonicalize(t.name) }]));
-    }
-
-    function getPackageTestsMap() {
-      const map = new Map();
-      for (const link of PACKAGE_TESTS) {
-        const pid = Number(link.package_id);
-        const tid = Number(link.test_id);
-        if (!map.has(pid)) map.set(pid, []);
-        map.get(pid).push(tid);
-      }
-      return map;
-    }
-
-    function buildRecommendations(selectedTests) {
-      const testMap = getTestMap();
-      const pkgMap = getPackageTestsMap();
-
-      const results = PACKAGES.map((pkg) => {
-        const testIds = pkgMap.get(Number(pkg.id)) || [];
-        const pkgTests = testIds.map((id) => testMap.get(id)).filter(Boolean);
-
-        const matched = [];
-        const missing = [];
-
-        for (const reqTest of selectedTests) {
-          const found = pkgTests.find((t) => {
-            const name = t.canonical;
-            return name === reqTest || name.includes(reqTest) || reqTest.includes(name);
-          });
-          if (found) matched.push(reqTest);
-          else missing.push(reqTest);
-        }
-
-        const coverage = selectedTests.length
-          ? Math.round((matched.length / selectedTests.length) * 100)
-          : 0;
-
-        return {
-          id: pkg.id,
-          name: pkg.name,
-          price: pkg.price,
-          coverage,
-          matchedTests: matched,
-          missingTests: missing,
-          packageTestCount: pkgTests.length,
-        };
-      });
-
-      return results
-        .filter((x) => x.coverage > 0)
-        .sort((a, b) => {
-          if (b.coverage !== a.coverage) return b.coverage - a.coverage;
-          if (b.packageTestCount !== a.packageTestCount) return b.packageTestCount - a.packageTestCount;
-          return Number(a.price) - Number(b.price);
-        });
-    }
-
-    function renderSelectedStack() {
-      if (!state.selectedTests.length) {
-        el.selectedStack.innerHTML = '<div class="empty" style="width:100%">لا توجد تحاليل مختارة.</div>';
-        el.currentSummary.textContent = 'لا توجد تحاليل مدخلة';
-        return;
-      }
-
-      el.selectedStack.innerHTML = state.selectedTests.map((t) => `
-        <div class="chip-row">
-          <span>${escapeHtml(t)}</span>
-          <button type="button" data-remove="${escapeAttr(t)}">حذف</button>
         </div>
-      `).join('');
 
-      el.currentSummary.textContent = state.selectedTests.join(' • ');
+      </div>
 
-      [...el.selectedStack.querySelectorAll('[data-remove]')].forEach((btn) => {
-        btn.addEventListener('click', () => {
-          state.selectedTests = state.selectedTests.filter((x) => normalizeText(x) !== normalizeText(btn.dataset.remove));
-          render();
-        });
-      });
+      <div class="card">
+
+        <h2>التحاليل المختارة</h2>
+
+        <div id="selectedList" class="selected-list">
+
+          <div class="empty">
+            لا توجد تحاليل مختارة
+          </div>
+
+        </div>
+
+        <div style="margin-top:20px;">
+
+          <label style="display:block;margin-bottom:8px;font-weight:700;">
+            نسبة الخصم %
+          </label>
+
+          <input
+            type="number"
+            id="discount"
+            value="0"
+            min="0"
+            max="100"
+          />
+
+        </div>
+
+        <!-- TOTALS -->
+
+        <div class="totals">
+
+          <div class="box">
+
+            <span>
+              الإجمالي قبل الخصم
+            </span>
+
+            <strong id="subtotal">
+              0 EGP
+            </strong>
+
+          </div>
+
+          <div class="box">
+
+            <span>
+              قيمة الخصم
+            </span>
+
+            <strong id="discountValue">
+              0 EGP
+            </strong>
+
+          </div>
+
+          <div class="box">
+
+            <span>
+              الإجمالي بعد الخصم
+            </span>
+
+            <strong
+              id="totalAfter"
+              class="green-text"
+            >
+              0 EGP
+            </strong>
+
+          </div>
+
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+          <button
+            id="copyAll"
+            class="main-btn green"
+          >
+            نسخ التقرير
+          </button>
+
+          <button
+            id="clearAll"
+            class="main-btn dark"
+          >
+            مسح الكل
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- COMPARE -->
+
+    <div class="tab-content" id="compareTab">
+
+      <div class="card">
+
+        <h1>مقارنة الباقات</h1>
+
+        <p>
+          ابحث عن التحليل واضغط عليه للإضافة
+        </p>
+
+        <input
+          type="text"
+          id="compareSearch"
+          placeholder="ابحث عن تحليل..."
+          autocomplete="off"
+        />
+
+        <div id="compareSearchResults" class="results">
+
+          <div class="empty">
+            ابدأ بكتابة اسم التحليل
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <h2>
+          التحاليل المطلوبة
+        </h2>
+
+        <div id="compareSelectedList" class="selected-list">
+
+          <div class="empty">
+            لا توجد تحاليل
+          </div>
+
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+          <button
+            id="compareBtn"
+            class="main-btn"
+          >
+            مقارنة الباقات
+          </button>
+
+          <button
+            id="clearCompare"
+            class="main-btn dark"
+          >
+            مسح الكل
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <h2>
+          نتائج المقارنة
+        </h2>
+
+        <div id="compareResults">
+
+          <div class="empty">
+            أضف التحاليل ثم اضغط مقارنة
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://ezawuhkjdghyfekoezbq.supabase.co";
+
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo";
+
+const client =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+/* ======================
+   TABS
+====================== */
+
+document
+.querySelectorAll(".tab-btn")
+.forEach(btn=>{
+
+  btn.addEventListener("click",()=>{
+
+    document
+    .querySelectorAll(".tab-btn")
+    .forEach(x=>
+      x.classList.remove("active")
+    );
+
+    document
+    .querySelectorAll(".tab-content")
+    .forEach(x=>
+      x.classList.remove("active")
+    );
+
+    btn.classList.add("active");
+
+    document
+    .getElementById(btn.dataset.tab)
+    .classList.add("active");
+
+  });
+
+});
+
+/* ======================
+   PRICING
+====================== */
+
+const searchInput =
+document.getElementById("search");
+
+const resultsDiv =
+document.getElementById("results");
+
+const selectedList =
+document.getElementById("selectedList");
+
+const discountInput =
+document.getElementById("discount");
+
+const subtotalEl =
+document.getElementById("subtotal");
+
+const discountValueEl =
+document.getElementById("discountValue");
+
+const totalAfterEl =
+document.getElementById("totalAfter");
+
+let selectedTests = [];
+
+function formatEGP(v){
+
+  return Number(v || 0)
+    .toLocaleString("en-EG")
+    + " EGP";
+
+}
+
+async function searchTests(query){
+
+  const q = query.trim();
+
+  if(!q){
+
+    resultsDiv.innerHTML = `
+      <div class="empty">
+        ابدأ بكتابة اسم التحليل
+      </div>
+    `;
+
+    return;
+  }
+
+  try{
+
+    const { data, error } =
+      await client
+      .from("tests")
+      .select("id,name,price")
+      .ilike("name", `%${q}%`)
+      .limit(10);
+
+    if(error) throw error;
+
+    if(!data.length){
+
+      resultsDiv.innerHTML = `
+        <div class="empty">
+          لا توجد نتائج
+        </div>
+      `;
+
+      return;
     }
 
-    function renderSuggestions() {
-      const text = normalizeText(state.query);
-      const selectedSet = new Set(state.selectedTests.map(normalizeText));
+    resultsDiv.innerHTML =
+      data.map(item=>`
 
-      if (!text || !state.showSuggestions) {
-        el.suggestions.style.display = 'none';
-        el.suggestions.innerHTML = '';
-        return;
-      }
+      <div
+        class="item"
+        onclick="addTest(
+          ${item.id},
+          '${item.name.replace(/'/g,"\\'")}',
+          ${item.price}
+        )"
+      >
 
-      const list = TESTS
-        .map((t) => ({ ...t, canonical: canonicalize(t.name) }))
-        .filter((t) => {
-          const name = normalizeText(t.name);
-          const canonical = normalizeText(t.canonical);
-          const matches = name.includes(text) || canonical.includes(text);
-          const alreadySelected = selectedSet.has(name) || selectedSet.has(canonical);
-          return matches && !alreadySelected;
-        })
-        .sort((a, b) => {
-          const aStarts = normalizeText(a.name).startsWith(text) || normalizeText(a.canonical).startsWith(text);
-          const bStarts = normalizeText(b.name).startsWith(text) || normalizeText(b.canonical).startsWith(text);
-          if (aStarts !== bStarts) return aStarts ? -1 : 1;
-          return a.name.localeCompare(b.name);
-        })
-        .slice(0, 10);
+        <div>
 
-      if (!list.length) {
-        el.suggestions.style.display = 'none';
-        el.suggestions.innerHTML = '';
-        return;
-      }
-
-      el.suggestions.style.display = 'block';
-      el.suggestions.innerHTML = list.map((item) => `
-        <button type="button" class="suggestion" data-suggestion="${escapeAttr(item.name)}">
           <div>
-            <div class="s-name">${escapeHtml(item.name)}</div>
-            <div class="s-sub">${item.price !== undefined ? `${item.price} EGP` : ''}</div>
+            <strong>
+              ${item.name}
+            </strong>
           </div>
-          <div class="s-sub">اختيار</div>
+
+          <div class="price">
+            ${formatEGP(item.price)}
+          </div>
+
+        </div>
+
+        <div>
+          اضغط للإضافة
+        </div>
+
+      </div>
+
+    `).join("");
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+function addTest(id,name,price){
+
+  const exists =
+    selectedTests.some(x=>x.id===id);
+
+  if(exists) return;
+
+  selectedTests.push({
+    id,name,price
+  });
+
+  renderSelected();
+
+  calculateTotals();
+
+  searchInput.value = "";
+
+  searchTests("");
+
+}
+
+function renderSelected(){
+
+  if(!selectedTests.length){
+
+    selectedList.innerHTML = `
+      <div class="empty">
+        لا توجد تحاليل مختارة
+      </div>
+    `;
+
+    return;
+  }
+
+  selectedList.innerHTML =
+    selectedTests.map(item=>`
+
+      <div class="selected-item">
+
+        <div>
+
+          <strong>
+            ${item.name}
+          </strong>
+
+          <div class="price">
+            ${formatEGP(item.price)}
+          </div>
+
+        </div>
+
+        <button
+          class="remove-btn"
+          onclick="removeTest(${item.id})"
+        >
+          حذف
         </button>
-      `).join('');
 
-      [...el.suggestions.querySelectorAll('[data-suggestion]')].forEach((btn) => {
-        btn.addEventListener('click', () => addTest(btn.dataset.suggestion));
+      </div>
+
+    `).join("");
+
+}
+
+function removeTest(id){
+
+  selectedTests =
+    selectedTests.filter(x=>x.id!==id);
+
+  renderSelected();
+
+  calculateTotals();
+
+}
+
+function calculateTotals(){
+
+  const subtotal =
+    selectedTests.reduce(
+      (sum,item)=>
+        sum + Number(item.price || 0),
+      0
+    );
+
+  const discountPercent =
+    Number(discountInput.value || 0);
+
+  const discountValue =
+    subtotal * (discountPercent / 100);
+
+  const totalAfter =
+    subtotal - discountValue;
+
+  subtotalEl.textContent =
+    formatEGP(subtotal);
+
+  discountValueEl.textContent =
+    formatEGP(discountValue);
+
+  totalAfterEl.textContent =
+    formatEGP(totalAfter);
+
+}
+
+searchInput.addEventListener(
+  "input",
+  e=>{
+
+    clearTimeout(window.searchDebounce);
+
+    window.searchDebounce =
+      setTimeout(()=>{
+
+        searchTests(e.target.value);
+
+      },300);
+
+  }
+);
+
+discountInput.addEventListener(
+  "input",
+  calculateTotals
+);
+
+/* ======================
+   CLEAR
+====================== */
+
+document
+.getElementById("clearAll")
+.addEventListener("click",()=>{
+
+  selectedTests = [];
+
+  renderSelected();
+
+  calculateTotals();
+
+});
+
+/* ======================
+   COPY REPORT
+====================== */
+
+document
+.getElementById("copyAll")
+.addEventListener("click",()=>{
+
+  if(!selectedTests.length){
+
+    alert("لا توجد تحاليل");
+
+    return;
+  }
+
+  const subtotal =
+    selectedTests.reduce(
+      (s,i)=>s+Number(i.price||0),
+      0
+    );
+
+  const discountPercent =
+    Number(discountInput.value||0);
+
+  const discountValue =
+    subtotal * (discountPercent/100);
+
+  const totalAfter =
+    subtotal - discountValue;
+
+  let text =
+`📋 تسعير التحاليل
+
+`;
+
+  selectedTests.forEach((item,index)=>{
+
+    text +=
+`${index+1}- ${item.name} — ${formatEGP(item.price)}
+`;
+
+  });
+
+  text += `
+----------------------
+
+💰 الإجمالي قبل الخصم:
+${formatEGP(subtotal)}
+
+🎯 نسبة الخصم:
+${discountPercent}%
+
+🔻 قيمة الخصم:
+${formatEGP(discountValue)}
+
+✅ الإجمالي بعد الخصم:
+${formatEGP(totalAfter)}
+`;
+
+  const textarea =
+    document.createElement("textarea");
+
+  textarea.value = text;
+
+  document.body.appendChild(textarea);
+
+  textarea.select();
+
+  document.execCommand("copy");
+
+  document.body.removeChild(textarea);
+
+  alert("تم نسخ التقرير");
+
+});
+
+/* ======================
+   COMPARE
+====================== */
+
+const compareSearch =
+document.getElementById("compareSearch");
+
+const compareSearchResults =
+document.getElementById("compareSearchResults");
+
+const compareSelectedList =
+document.getElementById("compareSelectedList");
+
+let compareSelectedTests = [];
+
+async function searchCompareTests(query){
+
+  const q = query.trim();
+
+  if(!q){
+
+    compareSearchResults.innerHTML = `
+      <div class="empty">
+        ابدأ بكتابة اسم التحليل
+      </div>
+    `;
+
+    return;
+  }
+
+  try{
+
+    const { data, error } =
+      await client
+      .from("tests")
+      .select("id,name")
+      .ilike("name", `%${q}%`)
+      .limit(10);
+
+    if(error) throw error;
+
+    if(!data.length){
+
+      compareSearchResults.innerHTML = `
+        <div class="empty">
+          لا توجد نتائج
+        </div>
+      `;
+
+      return;
+    }
+
+    compareSearchResults.innerHTML =
+      data.map(item=>`
+
+      <div
+        class="item"
+        onclick="addCompareTest(
+          ${item.id},
+          '${item.name.replace(/'/g,"\\'")}'
+        )"
+      >
+
+        <div>
+          <strong>
+            ${item.name}
+          </strong>
+        </div>
+
+        <div>
+          اضغط للإضافة
+        </div>
+
+      </div>
+
+    `).join("");
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+function addCompareTest(id,name){
+
+  const exists =
+    compareSelectedTests.some(
+      x=>x.id===id
+    );
+
+  if(exists) return;
+
+  compareSelectedTests.push({
+    id,name
+  });
+
+  renderCompareSelected();
+
+  compareSearch.value = "";
+
+  searchCompareTests("");
+
+}
+
+function renderCompareSelected(){
+
+  if(!compareSelectedTests.length){
+
+    compareSelectedList.innerHTML = `
+      <div class="empty">
+        لا توجد تحاليل
+      </div>
+    `;
+
+    return;
+  }
+
+  compareSelectedList.innerHTML =
+    compareSelectedTests.map(item=>`
+
+      <div class="selected-item">
+
+        <div>
+
+          <strong>
+            ${item.name}
+          </strong>
+
+        </div>
+
+        <button
+          class="remove-btn"
+          onclick="removeCompareTest(${item.id})"
+        >
+          حذف
+        </button>
+
+      </div>
+
+    `).join("");
+
+}
+
+function removeCompareTest(id){
+
+  compareSelectedTests =
+    compareSelectedTests.filter(
+      x=>x.id!==id
+    );
+
+  renderCompareSelected();
+
+}
+
+compareSearch.addEventListener(
+  "input",
+  e=>{
+
+    clearTimeout(window.compareDebounce);
+
+    window.compareDebounce =
+      setTimeout(()=>{
+
+        searchCompareTests(
+          e.target.value
+        );
+
+      },300);
+
+  }
+);
+
+document
+.getElementById("clearCompare")
+.addEventListener("click",()=>{
+
+  compareSelectedTests = [];
+
+  renderCompareSelected();
+
+});
+
+document
+.getElementById("compareBtn")
+.addEventListener("click",comparePackages);
+
+async function comparePackages(){
+
+  if(!compareSelectedTests.length){
+
+    alert("أضف التحاليل");
+
+    return;
+  }
+
+  const compareResults =
+    document.getElementById("compareResults");
+
+  compareResults.innerHTML =
+    `<div class="empty">جاري المقارنة...</div>`;
+
+  try{
+
+    const { data: packages, error: pkgErr } =
+      await client
+      .from("packages")
+      .select("*");
+
+    if(pkgErr) throw pkgErr;
+
+    const { data: packageTests, error: ptErr } =
+      await client
+      .from("package_tests")
+      .select("*");
+
+    if(ptErr) throw ptErr;
+
+    const { data: testsData, error: tErr } =
+      await client
+      .from("tests")
+      .select("*");
+
+    if(tErr) throw tErr;
+
+    // التحقق من وجود باقات أصلاً
+    if(!packages || !packages.length){
+      compareResults.innerHTML = `
+        <div class="empty">
+          لا توجد باقات في قاعدة البيانات
+        </div>
+      `;
+      return;
+    }
+
+    // خريطة test_id => test_name للمطابقة بالاسم احتياطياً
+    const testIdToName = {};
+    (testsData || []).forEach(t=>{
+      testIdToName[t.id] =
+        (t.name || "").trim().toLowerCase();
+    });
+
+    // إجمالي سعر الطلب المفرد
+    const requestedSubtotal =
+      compareSelectedTests.reduce((s,t)=>{
+        const found =
+          (testsData || [])
+            .find(x=>x.id===t.id);
+        return s + Number(found?.price || 0);
+      },0);
+
+    let results = [];
+
+    packages.forEach(pkg=>{
+
+      // تحاليل الباقة
+      const pkgTests =
+        (packageTests || []).filter(
+          x => Number(x.package_id) === Number(pkg.id)
+        );
+
+      // أسماء تحاليل الباقة (lowercase)
+      const pkgTestNames =
+        pkgTests.map(p=>
+          testIdToName[p.test_id] || ""
+        );
+
+      // المطابقة بالـ ID أو بالاسم
+      const matchedTests =
+        compareSelectedTests.filter(test=>{
+          const byId =
+            pkgTests.some(
+              p => Number(p.test_id) === Number(test.id)
+            );
+          const byName =
+            pkgTestNames.includes(
+              (test.name || "")
+                .trim().toLowerCase()
+            );
+          return byId || byName;
+        });
+
+      const missingTests =
+        compareSelectedTests.filter(test=>
+          !matchedTests.some(
+            m => m.id === test.id
+          )
+        );
+
+      const percent =
+        Math.round(
+          (matchedTests.length /
+          compareSelectedTests.length)
+          * 100
+        );
+
+      const savings =
+        requestedSubtotal -
+        Number(pkg.price || 0);
+
+      results.push({
+        ...pkg,
+        percent,
+        matchedTests,
+        missingTests,
+        totalTests: pkgTests.length,
+        savings
       });
+
+    });
+
+    // ترتيب: الأعلى تطابق أولاً، ثم الأقل سعراً
+    results.sort((a,b)=>{
+      if(b.percent !== a.percent){
+        return b.percent - a.percent;
+      }
+      return Number(a.price||0) -
+             Number(b.price||0);
+    });
+
+    if(!results.length){
+      compareResults.innerHTML = `
+        <div class="empty">
+          لا توجد نتائج
+        </div>
+      `;
+      return;
     }
 
-    function renderRecommendations() {
-      const selected = state.selectedTests;
-      state.recommendations = buildRecommendations(selected);
+    compareResults.innerHTML =
+      results.map(item=>{
 
-      if (!selected.length) {
-        el.recContainer.innerHTML = '<div class="empty">اضف التحاليل ثم اضغط مقارنة البكدجات.</div>';
-        return;
-      }
+        const percentClass =
+          item.percent === 100
+          ? "green-percent"
+          : item.percent >= 60
+          ? ""
+          : "orange-percent";
 
-      if (!state.recommendations.length) {
-        el.recContainer.innerHTML = '<div class="empty">لا توجد نتائج مطابقة لهذه التحاليل.</div>';
-        return;
-      }
+        const savingsText =
+          item.savings > 0
+          ? `<div style="color:#059669;font-weight:800;margin-top:6px;">
+               💸 توفير: ${formatEGP(item.savings)}
+             </div>`
+          : item.savings < 0
+          ? `<div style="color:#dc2626;font-weight:800;margin-top:6px;">
+               ⚠️ الباقة أغلى بـ ${formatEGP(Math.abs(item.savings))}
+             </div>`
+          : "";
 
-      el.recContainer.innerHTML = state.recommendations.map((pkg) => `
-        <article class="rec-item">
-          <div class="rec-top">
+        return `
+          <div class="compare-item">
+
+            <div class="compare-top">
+
+              <div>
+                <strong>${item.name}</strong>
+                <div class="price">
+                  ${formatEGP(item.price)}
+                </div>
+                ${savingsText}
+              </div>
+
+              <div class="percent ${percentClass}">
+                ${item.percent}%
+              </div>
+
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <strong>✅ التحاليل الموجودة:</strong>
+              <div style="margin-top:6px;color:#059669;">
+                ${
+                  item.matchedTests.length
+                  ? item.matchedTests
+                      .map(x=>x.name)
+                      .join(" - ")
+                  : "لا يوجد"
+                }
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <strong>❌ التحاليل الناقصة:</strong>
+              <div style="margin-top:6px;color:#dc2626;">
+                ${
+                  item.missingTests.length
+                  ? item.missingTests
+                      .map(x=>x.name)
+                      .join(" - ")
+                  : "لا يوجد"
+                }
+              </div>
+            </div>
+
             <div>
-              <div class="pkg-name">${escapeHtml(pkg.name)}</div>
-              <div class="muted">عدد التحاليل داخل البكدج: ${pkg.packageTestCount}</div>
+              عدد التحاليل داخل الباقة:
+              <strong>${item.totalTests}</strong>
             </div>
-            <div class="pkg-price">${pkg.price} EGP</div>
+
           </div>
-          <span class="badge ${pkg.coverage === 100 ? 'green' : pkg.coverage >= 75 ? 'blue' : 'orange'}">مناسب بنسبة ${pkg.coverage}%</span>
-          <div class="muted" style="margin-top:10px;">
-            <strong>الموجود من طلب العميل:</strong>
-            <ul class="list">
-              ${pkg.matchedTests.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
-            </ul>
-            ${pkg.missingTests.length ? `
-              <strong>التحاليل الناقصة:</strong>
-              <ul class="list">
-                ${pkg.missingTests.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
-              </ul>
-            ` : ''}
-          </div>
-        </article>
-      `).join('');
-    }
+        `;
+      }).join("");
 
-    function renderPricing() {
-      const testQ = normalizeText(el.pricingTestsSearch.value);
-      const pkgQ = normalizeText(el.pricingPackagesSearch.value);
+  }catch(err){
 
-      const tests = TESTS.filter((t) => normalizeText(t.name).includes(testQ));
-      const packages = PACKAGES.filter((p) => normalizeText(p.name).includes(pkgQ));
+    console.error(err);
 
-      el.testsPriceList.innerHTML = tests.length
-        ? tests.map((t) => `
-            <div class="price-row">
-              <span>${escapeHtml(t.name)}</span>
-              <strong>${t.price} EGP</strong>
-            </div>
-          `).join('')
-        : '<div class="empty">لا توجد تحاليل مطابقة.</div>';
+    compareResults.innerHTML = `
+      <div class="empty">
+        حدث خطأ أثناء المقارنة: ${err.message}
+      </div>
+    `;
 
-      el.packagesPriceList.innerHTML = packages.length
-        ? packages.map((p) => `
-            <div class="price-row">
-              <span>${escapeHtml(p.name)}</span>
-              <strong>${p.price} EGP</strong>
-            </div>
-          `).join('')
-        : '<div class="empty">لا توجد بكدجات مطابقة.</div>';
-    }
+  }
 
-    function addTest(testName) {
-      const canonical = canonicalize(testName);
-      if (!canonical) return;
+}
 
-      if (!state.selectedTests.some((x) => normalizeText(x) === normalizeText(canonical))) {
-        state.selectedTests.push(canonical);
-      }
+renderSelected();
 
-      state.query = '';
-      state.showSuggestions = false;
-      el.searchInput.value = '';
-      render();
-    }
+calculateTotals();
 
-    function render() {
-      renderSelectedStack();
-      renderSuggestions();
-      renderRecommendations();
-      renderPricing();
-    }
+</script>
 
-    async function loadSupabaseData() {
-      try {
-        if (typeof supabase === 'undefined') {
-          throw new Error('Supabase SDK not loaded.');
-        }
-
-        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const [testsRes, packagesRes, linksRes] = await Promise.all([
-          client.from('tests').select('*').order('id'),
-          client.from('packages').select('*').order('id'),
-          client.from('package_tests').select('*').order('package_id')
-        ]);
-
-        if (testsRes.error) throw testsRes.error;
-        if (packagesRes.error) throw packagesRes.error;
-        if (linksRes.error) throw linksRes.error;
-
-        TESTS = testsRes.data || [];
-        PACKAGES = packagesRes.data || [];
-        PACKAGE_TESTS = linksRes.data || [];
-
-        setError('');
-        render();
-      } catch (error) {
-        console.error(error);
-        setError('فشل تحميل البيانات من Supabase. تأكد من المفتاح الصحيح وأسماء الجداول وصلاحيات القراءة.');
-      }
-    }
-
-    el.tabs.forEach((btn) => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-
-    el.searchInput.addEventListener('input', (e) => {
-      state.query = e.target.value;
-      state.showSuggestions = true;
-      renderSuggestions();
-    });
-    el.searchInput.addEventListener('focus', () => {
-      state.showSuggestions = true;
-      renderSuggestions();
-    });
-    el.searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const text = normalizeText(state.query);
-        const selectedSet = new Set(state.selectedTests.map(normalizeText));
-        const first = TESTS
-          .map((t) => ({ ...t, canonical: canonicalize(t.name) }))
-          .filter((t) => {
-            const name = normalizeText(t.name);
-            const canonical = normalizeText(t.canonical);
-            const matches = name.includes(text) || canonical.includes(text);
-            const alreadySelected = selectedSet.has(name) || selectedSet.has(canonical);
-            return matches && !alreadySelected;
-          })[0];
-        if (first) addTest(first.name);
-      }
-      if (e.key === 'Escape') {
-        state.showSuggestions = false;
-        renderSuggestions();
-      }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search-wrap')) {
-        state.showSuggestions = false;
-        renderSuggestions();
-      }
-    });
-
-    el.compareBtn.addEventListener('click', () => {
-      renderRecommendations();
-    });
-
-    el.clearBtn.addEventListener('click', () => {
-      state.selectedTests = [];
-      state.query = '';
-      state.showSuggestions = false;
-      el.searchInput.value = '';
-      render();
-    });
-
-    el.pricingTestsSearch.addEventListener('input', renderPricing);
-    el.pricingPackagesSearch.addEventListener('input', renderPricing);
-
-    if (SUPABASE_ANON_KEY === 'PUT_YOUR_ANON_KEY_HERE') {
-      setError('ضع anon key الصحيح من Supabase داخل SUPABASE_ANON_KEY.');
-    } else {
-      loadSupabaseData();
-    }
-  </script>
 </body>
 </html>
