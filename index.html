@@ -11,6 +11,21 @@
 
 <style>
 
+
+
+
+@keyframes shine{
+
+  0%{
+    background-position:0% center;
+  }
+
+  100%{
+    background-position:200% center;
+  }
+
+}
+
 *{
   margin:0;
   padding:0;
@@ -290,8 +305,48 @@ textarea{
   <div class="sidebar">
 
     <div class="logo">
-      MOZMEN LAB
-    </div>
+
+  
+
+  <div class="logo">
+
+  <div style="
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:1px;
+    color:#ffffff;
+    text-shadow:
+      0 0 8px rgba(255,255,255,.5),
+      0 0 18px rgba(37,99,235,.8),
+      0 0 30px rgba(37,99,235,.7);
+  ">
+    MOZMEN LAB
+  </div>
+
+  <div style="
+    margin-top:8px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    background:linear-gradient(
+      90deg,
+      #ffffff,
+      #60a5fa,
+      #ffffff
+    );
+    background-size:200% auto;
+    color:transparent;
+    -webkit-background-clip:text;
+    background-clip:text;
+    animation:shine 3s linear infinite;
+  ">
+    Development By Mostafa
+  </div>
+
+</div>
+
+</div>
 
     <button class="tab-btn active" data-tab="pricingTab">
       💰 التسعير
@@ -863,19 +918,11 @@ document
   });
 
   text += `
-----------------------
-
-💰 الإجمالي قبل الخصم:
-${formatEGP(subtotal)}
-
-🎯 نسبة الخصم:
-${discountPercent}%
-
-🔻 قيمة الخصم:
-${formatEGP(discountValue)}
-
-✅ الإجمالي بعد الخصم:
-${formatEGP(totalAfter)}
+💰 قبل الخصم: ${formatEGP(subtotal)}
+🎯 الخصم: ${discountPercent}%
+🔻 قيمة الخصم: ${formatEGP(discountValue)}
+━━━━━━━━━━━━
+✅ الاجمالي بعد الخصم: ${formatEGP(totalAfter)}
 `;
 
   const textarea =
@@ -1083,186 +1130,161 @@ document
 .getElementById("compareBtn")
 .addEventListener("click",comparePackages);
 
-async function comparePackages(){
+async function fetchAllRows(tableName) {
+  const pageSize = 1000;
+  let from = 0;
+  let allRows = [];
 
-  if(!compareSelectedTests.length){
+  while (true) {
+    const { data, error } = await client
+      .from(tableName)
+      .select("*")
+      .range(from, from + pageSize - 1);
 
+    if (error) throw error;
+
+    allRows = allRows.concat(data || []);
+
+    if (!data || data.length < pageSize) break;
+
+    from += pageSize;
+  }
+
+  return allRows;
+}
+
+async function comparePackages() {
+  if (!compareSelectedTests.length) {
     alert("أضف التحاليل");
-
     return;
   }
 
-  const compareResults =
-    document.getElementById("compareResults");
+  const compareResults = document.getElementById("compareResults");
+  compareResults.innerHTML = `<div class="empty">جاري المقارنة...</div>`;
 
-  compareResults.innerHTML =
-    `<div class="empty">جاري المقارنة...</div>`;
+  try {
+    const packages = await fetchAllRows("packages");
+    const packageTests = await fetchAllRows("package_tests");
+    const testsData = await fetchAllRows("tests");
 
-  try{
-
-    const { data: packages, error: pkgErr } =
-      await client
-      .from("packages")
-      .select("*");
-
-    if(pkgErr) throw pkgErr;
-
-    const { data: packageTests, error: ptErr } =
-      await client
-      .from("package_tests")
-      .select("*");
-
-    if(ptErr) throw ptErr;
-
-    const { data: testsData, error: tErr } =
-      await client
-      .from("tests")
-      .select("*");
-
-    if(tErr) throw tErr;
-
-    // التحقق من وجود باقات أصلاً
-    if(!packages || !packages.length){
-      compareResults.innerHTML = `
-        <div class="empty">
-          لا توجد باقات في قاعدة البيانات
-        </div>
-      `;
+    if (!packages || !packages.length) {
+      compareResults.innerHTML = `<div class="empty">لا توجد باقات في قاعدة البيانات</div>`;
       return;
     }
 
-    // خريطة test_id => test_name للمطابقة بالاسم احتياطياً
+    function normalizeName(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u064B-\u065F]/g, "")
+        .replace(/[^a-z0-9\u0600-\u06FF]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function isMatch(a, b) {
+      const aa = normalizeName(a);
+      const bb = normalizeName(b);
+
+      if (!aa || !bb) return false;
+      if (aa === bb) return true;
+      if (aa.includes(bb)) return true;
+      if (bb.includes(aa)) return true;
+
+      const aWords = aa.split(" ").filter(Boolean);
+      const bWords = bb.split(" ").filter(Boolean);
+
+      return aWords.some((w) => bWords.includes(w) && w.length > 1);
+    }
+
     const testIdToName = {};
-    (testsData || []).forEach(t=>{
-      testIdToName[t.id] =
-        (t.name || "").trim().toLowerCase();
+    (testsData || []).forEach((t) => {
+      testIdToName[Number(t.id)] = t.name || "";
     });
 
-    // إجمالي سعر الطلب المفرد
-    const requestedSubtotal =
-      compareSelectedTests.reduce((s,t)=>{
-        const found =
-          (testsData || [])
-            .find(x=>x.id===t.id);
-        return s + Number(found?.price || 0);
-      },0);
+    const selectedSubtotal = compareSelectedTests.reduce((sum, item) => {
+      const found = (testsData || []).find(
+        (x) => Number(x.id) === Number(item.id)
+      );
+      return sum + Number(found?.price || 0);
+    }, 0);
 
-    let results = [];
+    const results = [];
 
-    packages.forEach(pkg=>{
+    packages.forEach((pkg) => {
+      const pkgTests = (packageTests || []).filter(
+        (x) => Number(x.package_id) === Number(pkg.id)
+      );
 
-      // تحاليل الباقة
-      const pkgTests =
-        (packageTests || []).filter(
-          x => Number(x.package_id) === Number(pkg.id)
-        );
+      const pkgTestNames = pkgTests
+        .map((p) => testIdToName[Number(p.test_id)] || "")
+        .filter(Boolean);
 
-      // أسماء تحاليل الباقة (lowercase)
-      const pkgTestNames =
-        pkgTests.map(p=>
-          testIdToName[p.test_id] || ""
-        );
+      const matchedTests = compareSelectedTests.filter((test) =>
+        pkgTestNames.some((pkgName) => isMatch(pkgName, test.name))
+      );
 
-      // المطابقة بالـ ID أو بالاسم
-      const matchedTests =
-        compareSelectedTests.filter(test=>{
-          const byId =
-            pkgTests.some(
-              p => Number(p.test_id) === Number(test.id)
-            );
-          const byName =
-            pkgTestNames.includes(
-              (test.name || "")
-                .trim().toLowerCase()
-            );
-          return byId || byName;
+      const missingTests = compareSelectedTests.filter(
+        (test) => !matchedTests.some((m) => Number(m.id) === Number(test.id))
+      );
+
+      const percent = Math.round(
+        (matchedTests.length / compareSelectedTests.length) * 100
+      );
+
+      if (matchedTests.length > 0) {
+        results.push({
+          ...pkg,
+          percent,
+          matchedTests,
+          missingTests,
+          totalTests: pkgTests.length,
+          savings: selectedSubtotal - Number(pkg.price || 0),
         });
-
-      const missingTests =
-        compareSelectedTests.filter(test=>
-          !matchedTests.some(
-            m => m.id === test.id
-          )
-        );
-
-      const percent =
-        Math.round(
-          (matchedTests.length /
-          compareSelectedTests.length)
-          * 100
-        );
-
-      const savings =
-        requestedSubtotal -
-        Number(pkg.price || 0);
-
-      results.push({
-        ...pkg,
-        percent,
-        matchedTests,
-        missingTests,
-        totalTests: pkgTests.length,
-        savings
-      });
-
-    });
-
-    // ترتيب: الأعلى تطابق أولاً، ثم الأقل سعراً
-    results.sort((a,b)=>{
-      if(b.percent !== a.percent){
-        return b.percent - a.percent;
       }
-      return Number(a.price||0) -
-             Number(b.price||0);
     });
 
-    if(!results.length){
-      compareResults.innerHTML = `
-        <div class="empty">
-          لا توجد نتائج
-        </div>
-      `;
+    results.sort((a, b) => {
+      if (b.percent !== a.percent) return b.percent - a.percent;
+      if (b.matchedTests.length !== a.matchedTests.length) {
+        return b.matchedTests.length - a.matchedTests.length;
+      }
+      return Number(a.price || 0) - Number(b.price || 0);
+    });
+
+    if (!results.length) {
+      compareResults.innerHTML = `<div class="empty">لا توجد نتائج</div>`;
       return;
     }
 
-    compareResults.innerHTML =
-      results.map(item=>{
-
+    compareResults.innerHTML = results
+      .map((item) => {
         const percentClass =
           item.percent === 100
-          ? "green-percent"
-          : item.percent >= 60
-          ? ""
-          : "orange-percent";
+            ? "green-percent"
+            : item.percent >= 60
+            ? ""
+            : "orange-percent";
 
         const savingsText =
           item.savings > 0
-          ? `<div style="color:#059669;font-weight:800;margin-top:6px;">
-               💸 توفير: ${formatEGP(item.savings)}
-             </div>`
-          : item.savings < 0
-          ? `<div style="color:#dc2626;font-weight:800;margin-top:6px;">
-               ⚠️ الباقة أغلى بـ ${formatEGP(Math.abs(item.savings))}
-             </div>`
-          : "";
+            ? `<div style="color:#059669;font-weight:800;margin-top:6px;">💸 توفير: ${formatEGP(item.savings)}</div>`
+            : item.savings < 0
+            ? `<div style="color:#dc2626;font-weight:800;margin-top:6px;">⚠️ الباقة أغلى بـ ${formatEGP(Math.abs(item.savings))}</div>`
+            : "";
 
         return `
           <div class="compare-item">
-
             <div class="compare-top">
-
               <div>
                 <strong>${item.name}</strong>
-                <div class="price">
-                  ${formatEGP(item.price)}
-                </div>
+                <div class="price">${formatEGP(item.price)}</div>
                 ${savingsText}
               </div>
 
               <div class="percent ${percentClass}">
                 ${item.percent}%
               </div>
-
             </div>
 
             <div style="margin-bottom:12px;">
@@ -1270,10 +1292,8 @@ async function comparePackages(){
               <div style="margin-top:6px;color:#059669;">
                 ${
                   item.matchedTests.length
-                  ? item.matchedTests
-                      .map(x=>x.name)
-                      .join(" - ")
-                  : "لا يوجد"
+                    ? item.matchedTests.map((x) => x.name).join(" - ")
+                    : "لا يوجد"
                 }
               </div>
             </div>
@@ -1283,10 +1303,8 @@ async function comparePackages(){
               <div style="margin-top:6px;color:#dc2626;">
                 ${
                   item.missingTests.length
-                  ? item.missingTests
-                      .map(x=>x.name)
-                      .join(" - ")
-                  : "لا يوجد"
+                    ? item.missingTests.map((x) => x.name).join(" - ")
+                    : "لا يوجد"
                 }
               </div>
             </div>
@@ -1295,24 +1313,16 @@ async function comparePackages(){
               عدد التحاليل داخل الباقة:
               <strong>${item.totalTests}</strong>
             </div>
-
           </div>
         `;
-      }).join("");
-
-  }catch(err){
-
+      })
+      .join("");
+  } catch (err) {
     console.error(err);
-
-    compareResults.innerHTML = `
-      <div class="empty">
-        حدث خطأ أثناء المقارنة: ${err.message}
-      </div>
-    `;
-
+    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة</div>`;
   }
-
 }
+
 
 renderSelected();
 
