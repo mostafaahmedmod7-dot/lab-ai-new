@@ -304,59 +304,51 @@ textarea{
 
   <div class="sidebar">
 
-    <div class="logo">
-
-  
-
   <div class="logo">
+    <div style="
+      font-size:26px;
+      font-weight:900;
+      letter-spacing:1px;
+      color:#ffffff;
+      text-shadow:
+        0 0 8px rgba(255,255,255,.5),
+        0 0 18px rgba(37,99,235,.8),
+        0 0 30px rgba(37,99,235,.7);
+    ">
+      MOZMEN LAB
+    </div>
 
-  <div style="
-    font-size:26px;
-    font-weight:900;
-    letter-spacing:1px;
-    color:#ffffff;
-    text-shadow:
-      0 0 8px rgba(255,255,255,.5),
-      0 0 18px rgba(37,99,235,.8),
-      0 0 30px rgba(37,99,235,.7);
-  ">
-    MOZMEN LAB
+    <div style="
+      margin-top:8px;
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      background:linear-gradient(
+        90deg,
+        #ffffff,
+        #60a5fa,
+        #ffffff
+      );
+      background-size:200% auto;
+      color:transparent;
+      -webkit-background-clip:text;
+      background-clip:text;
+      animation:shine 3s linear infinite;
+    ">
+      Development By Mostafa
+    </div>
   </div>
 
-  <div style="
-    margin-top:8px;
-    font-size:12px;
-    font-weight:700;
-    letter-spacing:1px;
-    text-transform:uppercase;
-    background:linear-gradient(
-      90deg,
-      #ffffff,
-      #60a5fa,
-      #ffffff
-    );
-    background-size:200% auto;
-    color:transparent;
-    -webkit-background-clip:text;
-    background-clip:text;
-    animation:shine 3s linear infinite;
-  ">
-    Development By Mostafa
-  </div>
+  <button class="tab-btn active" data-tab="pricingTab">
+    💰 التسعير
+  </button>
+
+  <button class="tab-btn" data-tab="compareTab">
+    📦 مقارنة الباقات
+  </button>
 
 </div>
-
-</div>
-
-    <button class="tab-btn active" data-tab="pricingTab">
-      💰 التسعير
-    </button>
-
-    <button class="tab-btn" data-tab="compareTab">
-      📦 مقارنة الباقات
-    </button>
-
-  </div>
 
   <!-- CONTENT -->
 
@@ -654,9 +646,32 @@ function formatEGP(v){
 
 }
 
+let ALL_TESTS = [];
+let ALL_PACKAGES = [];
+let ALL_PACKAGE_TESTS = [];
+
+async function loadAllData(){
+
+  const [testsRes, packagesRes, packageTestsRes] =
+    await Promise.all([
+      client.from("tests").select("*"),
+      client.from("packages").select("*"),
+      client.from("package_tests").select("*")
+    ]);
+
+  ALL_TESTS = testsRes.data || [];
+  ALL_PACKAGES = packagesRes.data || [];
+  ALL_PACKAGE_TESTS = packageTestsRes.data || [];
+}
+
+loadAllData().then(() => {
+  console.log("Data loaded successfully");
+});
+
 async function searchTests(query){
 
-  const q = query.trim();
+  const q =
+    query.trim().toLowerCase();
 
   if(!q){
 
@@ -669,36 +684,34 @@ async function searchTests(query){
     return;
   }
 
-  try{
+  const filtered =
+    ALL_TESTS
+    .filter(item =>
+      item.name
+      .toLowerCase()
+      .includes(q)
+    )
+    .slice(0,10);
 
-    const { data, error } =
-      await client
-      .from("tests")
-      .select("id,name,price")
-      .ilike("name", `%${q}%`)
-      .limit(10);
+  if(!filtered.length){
 
-    if(error) throw error;
+    resultsDiv.innerHTML = `
+      <div class="empty">
+        لا توجد نتائج
+      </div>
+    `;
 
-    if(!data.length){
+    return;
+  }
 
-      resultsDiv.innerHTML = `
-        <div class="empty">
-          لا توجد نتائج
-        </div>
-      `;
-
-      return;
-    }
-
-    resultsDiv.innerHTML =
-      data.map(item=>`
+  resultsDiv.innerHTML =
+    filtered.map(item=>`
 
       <div
         class="item"
         onclick="addTest(
           ${item.id},
-          '${item.name.replace(/'/g,"\\'")}',
+          '${item.name.replace(/'/g,"\\\\'")}',
           ${item.price}
         )"
       >
@@ -724,12 +737,6 @@ async function searchTests(query){
       </div>
 
     `).join("");
-
-  }catch(err){
-
-    console.error(err);
-
-  }
 
 }
 
@@ -841,14 +848,7 @@ searchInput.addEventListener(
   "input",
   e=>{
 
-    clearTimeout(window.searchDebounce);
-
-    window.searchDebounce =
-      setTimeout(()=>{
-
-        searchTests(e.target.value);
-
-      },300);
+    searchTests(e.target.value);
 
   }
 );
@@ -1130,30 +1130,13 @@ document
 .getElementById("compareBtn")
 .addEventListener("click",comparePackages);
 
-async function fetchAllRows(tableName) {
-  const pageSize = 1000;
-  let from = 0;
-  let allRows = [];
 
-  while (true) {
-    const { data, error } = await client
-      .from(tableName)
-      .select("*")
-      .range(from, from + pageSize - 1);
-
-    if (error) throw error;
-
-    allRows = allRows.concat(data || []);
-
-    if (!data || data.length < pageSize) break;
-
-    from += pageSize;
-  }
-
-  return allRows;
-}
 
 async function comparePackages() {
+  if(!ALL_TESTS.length || !ALL_PACKAGES.length || !ALL_PACKAGE_TESTS.length){
+  alert("الداتا لسه بتتحمل، حاول تاني بعد ثواني");
+  return;
+}
   if (!compareSelectedTests.length) {
     alert("أضف التحاليل");
     return;
@@ -1163,11 +1146,11 @@ async function comparePackages() {
   compareResults.innerHTML = `<div class="empty">جاري المقارنة...</div>`;
 
   try {
-    const packages = await fetchAllRows("packages");
-    const packageTests = await fetchAllRows("package_tests");
-    const testsData = await fetchAllRows("tests");
+    const packages = ALL_PACKAGES;
+    const packageTests = ALL_PACKAGE_TESTS;
+    const testsData = ALL_TESTS;
 
-    if (!packages || !packages.length) {
+    if (!packages.length) {
       compareResults.innerHTML = `<div class="empty">لا توجد باقات في قاعدة البيانات</div>`;
       return;
     }
@@ -1182,19 +1165,26 @@ async function comparePackages() {
         .trim();
     }
 
-    function isMatch(a, b) {
-      const aa = normalizeName(a);
-      const bb = normalizeName(b);
+    const aliases = {
+      amh: ["amh", "anti mullerian hormone", "anti-mullerian hormone"],
+      tsh: ["tsh", "thyroid stimulating hormone"],
+      cbc: ["cbc", "complete blood count", "cbc with film", "cbp", "fbc"],
+      creatinine: ["creatinine", "creat", "crea", "scr"],
+      urea: ["urea", "bun"],
+      copper: ["copper"],
+      drvvt: ["drvvt", "lupus anticoagulants drvvt", "lupus anticoagulant drvvt"],
+    };
 
-      if (!aa || !bb) return false;
-      if (aa === bb) return true;
-      if (aa.includes(bb)) return true;
-      if (bb.includes(aa)) return true;
+    function getPossibleNames(name) {
+      const n = normalizeName(name);
+      return aliases[n] || [n];
+    }
 
-      const aWords = aa.split(" ").filter(Boolean);
-      const bWords = bb.split(" ").filter(Boolean);
+    function isMatch(packageTestName, selectedTestName) {
+      const pkg = normalizeName(packageTestName);
+      const selectedVariants = getPossibleNames(selectedTestName).map(normalizeName);
 
-      return aWords.some((w) => bWords.includes(w) && w.length > 1);
+      return selectedVariants.some((variant) => variant === pkg);
     }
 
     const testIdToName = {};
@@ -1202,14 +1192,12 @@ async function comparePackages() {
       testIdToName[Number(t.id)] = t.name || "";
     });
 
-    const selectedSubtotal = compareSelectedTests.reduce((sum, item) => {
-      const found = (testsData || []).find(
-        (x) => Number(x.id) === Number(item.id)
-      );
+    const requestedSubtotal = compareSelectedTests.reduce((sum, item) => {
+      const found = (testsData || []).find((x) => Number(x.id) === Number(item.id));
       return sum + Number(found?.price || 0);
     }, 0);
 
-    const results = [];
+    let results = [];
 
     packages.forEach((pkg) => {
       const pkgTests = (packageTests || []).filter(
@@ -1239,18 +1227,20 @@ async function comparePackages() {
           matchedTests,
           missingTests,
           totalTests: pkgTests.length,
-          savings: selectedSubtotal - Number(pkg.price || 0),
+          savings: requestedSubtotal - Number(pkg.price || 0),
         });
       }
     });
 
     results.sort((a, b) => {
       if (b.percent !== a.percent) return b.percent - a.percent;
-      if (b.matchedTests.length !== a.matchedTests.length) {
-        return b.matchedTests.length - a.matchedTests.length;
+      if (Number(a.price || 0) !== Number(b.price || 0)) {
+        return Number(a.price || 0) - Number(b.price || 0);
       }
-      return Number(a.price || 0) - Number(b.price || 0);
+      return b.matchedTests.length - a.matchedTests.length;
     });
+
+    results = results.slice(0, 5);
 
     if (!results.length) {
       compareResults.innerHTML = `<div class="empty">لا توجد نتائج</div>`;
@@ -1319,7 +1309,7 @@ async function comparePackages() {
       .join("");
   } catch (err) {
     console.error(err);
-    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة</div>`;
+    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة: ${err.message}</div>`;
   }
 }
 
