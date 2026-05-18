@@ -1130,13 +1130,77 @@ document
 .getElementById("compareBtn")
 .addEventListener("click",comparePackages);
 
+function removeCompareTest(id){
 
+  compareSelectedTests =
+    compareSelectedTests.filter(
+      x=>x.id!==id
+    );
+
+  renderCompareSelected();
+
+}
+
+compareSearch.addEventListener(
+  "input",
+  e=>{
+
+    clearTimeout(window.compareDebounce);
+
+    window.compareDebounce =
+      setTimeout(()=>{
+
+        searchCompareTests(
+          e.target.value
+        );
+
+      },300);
+
+  }
+);
+
+document
+.getElementById("clearCompare")
+.addEventListener("click",()=>{
+
+  compareSelectedTests = [];
+
+  renderCompareSelected();
+
+});
+
+document
+.getElementById("compareBtn")
+.addEventListener("click",comparePackages);
+
+async function fetchAllRows(tableName) {
+
+  const pageSize = 1000;
+  let from = 0;
+  let allRows = [];
+
+  while (true) {
+
+    const { data, error } = await client
+      .from(tableName)
+      .select("*")
+      .range(from, from + pageSize - 1);
+
+    if (error) throw error;
+
+    if (data && data.length) {
+      allRows = allRows.concat(data);
+    }
+
+    if (!data || data.length < pageSize) break;
+
+    from += pageSize;
+  }
+
+  return allRows;
+}
 
 async function comparePackages() {
-  if(!ALL_TESTS.length || !ALL_PACKAGES.length || !ALL_PACKAGE_TESTS.length){
-  alert("الداتا لسه بتتحمل، حاول تاني بعد ثواني");
-  return;
-}
   if (!compareSelectedTests.length) {
     alert("أضف التحاليل");
     return;
@@ -1146,11 +1210,11 @@ async function comparePackages() {
   compareResults.innerHTML = `<div class="empty">جاري المقارنة...</div>`;
 
   try {
-    const packages = ALL_PACKAGES;
-    const packageTests = ALL_PACKAGE_TESTS;
-    const testsData = ALL_TESTS;
+    const packages = await fetchAllRows("packages");
+    const packageTests = await fetchAllRows("package_tests");
+    const testsData = await fetchAllRows("tests");
 
-    if (!packages.length) {
+    if (!packages || !packages.length) {
       compareResults.innerHTML = `<div class="empty">لا توجد باقات في قاعدة البيانات</div>`;
       return;
     }
@@ -1165,26 +1229,19 @@ async function comparePackages() {
         .trim();
     }
 
-    const aliases = {
-      amh: ["amh", "anti mullerian hormone", "anti-mullerian hormone"],
-      tsh: ["tsh", "thyroid stimulating hormone"],
-      cbc: ["cbc", "complete blood count", "cbc with film", "cbp", "fbc"],
-      creatinine: ["creatinine", "creat", "crea", "scr"],
-      urea: ["urea", "bun"],
-      copper: ["copper"],
-      drvvt: ["drvvt", "lupus anticoagulants drvvt", "lupus anticoagulant drvvt"],
-    };
+    function isMatch(a, b) {
+      const aa = normalizeName(a);
+      const bb = normalizeName(b);
 
-    function getPossibleNames(name) {
-      const n = normalizeName(name);
-      return aliases[n] || [n];
-    }
+      if (!aa || !bb) return false;
+      if (aa === bb) return true;
+      if (aa.includes(bb)) return true;
+      if (bb.includes(aa)) return true;
 
-    function isMatch(packageTestName, selectedTestName) {
-      const pkg = normalizeName(packageTestName);
-      const selectedVariants = getPossibleNames(selectedTestName).map(normalizeName);
+      const aWords = aa.split(" ").filter(Boolean);
+      const bWords = bb.split(" ").filter(Boolean);
 
-      return selectedVariants.some((variant) => variant === pkg);
+      return aWords.some((w) => bWords.includes(w) && w.length > 1);
     }
 
     const testIdToName = {};
@@ -1192,12 +1249,14 @@ async function comparePackages() {
       testIdToName[Number(t.id)] = t.name || "";
     });
 
-    const requestedSubtotal = compareSelectedTests.reduce((sum, item) => {
-      const found = (testsData || []).find((x) => Number(x.id) === Number(item.id));
+    const selectedSubtotal = compareSelectedTests.reduce((sum, item) => {
+      const found = (testsData || []).find(
+        (x) => Number(x.id) === Number(item.id)
+      );
       return sum + Number(found?.price || 0);
     }, 0);
 
-    let results = [];
+    const results = [];
 
     packages.forEach((pkg) => {
       const pkgTests = (packageTests || []).filter(
@@ -1227,20 +1286,18 @@ async function comparePackages() {
           matchedTests,
           missingTests,
           totalTests: pkgTests.length,
-          savings: requestedSubtotal - Number(pkg.price || 0),
+          savings: selectedSubtotal - Number(pkg.price || 0),
         });
       }
     });
 
     results.sort((a, b) => {
       if (b.percent !== a.percent) return b.percent - a.percent;
-      if (Number(a.price || 0) !== Number(b.price || 0)) {
-        return Number(a.price || 0) - Number(b.price || 0);
+      if (b.matchedTests.length !== a.matchedTests.length) {
+        return b.matchedTests.length - a.matchedTests.length;
       }
-      return b.matchedTests.length - a.matchedTests.length;
+      return Number(a.price || 0) - Number(b.price || 0);
     });
-
-    results = results.slice(0, 5);
 
     if (!results.length) {
       compareResults.innerHTML = `<div class="empty">لا توجد نتائج</div>`;
@@ -1309,11 +1366,9 @@ async function comparePackages() {
       .join("");
   } catch (err) {
     console.error(err);
-    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة: ${err.message}</div>`;
+    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة</div>`;
   }
 }
-
-
 renderSelected();
 
 calculateTotals();
