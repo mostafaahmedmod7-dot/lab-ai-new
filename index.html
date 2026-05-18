@@ -1,1379 +1,306 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOZMEN LAB SYSTEM | PRO</title>
+    <style>
+        /* CSS المتطور والمستجيب */
+        :root { --primary: #2563eb; --dark: #111827; --green: #059669; --bg: #f3f6fb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg); color: var(--dark); line-height: 1.6; }
+        .layout { display: flex; min-height: 100vh; }
 
-<meta charset="UTF-8" />
+        /* SIDEBAR */
+        .sidebar { width: 280px; background: var(--dark); color: #fff; padding: 25px; display: flex; flex-direction: column; gap: 15px; transition: 0.3s; }
+        .logo-box { margin-bottom: 30px; text-align: center; }
+        .logo-main { font-size: 26px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(37,99,235,0.6); }
+        .logo-sub { font-size: 11px; color: #60a5fa; letter-spacing: 1px; margin-top: 5px; }
+        
+        .tab-btn { 
+            border: none; background: #1f2937; color: #fff; padding: 16px; border-radius: 12px; 
+            text-align: right; cursor: pointer; font-size: 15px; font-weight: 600; transition: 0.3s; 
+        }
+        .tab-btn:hover, .tab-btn.active { background: var(--primary); transform: translateX(-5px); }
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        /* CONTENT AREA */
+        .content { flex: 1; padding: 30px; max-width: 1200px; margin: 0 auto; }
+        .tab-content { display: none; animation: fadeIn 0.4s; }
+        .tab-content.active { display: block; }
 
-<title>MOZMEN LAB SYSTEM</title>
+        .card { background: #fff; border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
+        h1 { font-size: 22px; margin-bottom: 15px; }
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid #d1d5db; outline: none; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
 
-<style>
+        /* LISTS & ITEMS */
+        .results-box { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
+        .test-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .test-item:hover { border-color: var(--primary); background: #eff6ff; }
+        
+        .selected-list { margin-top: 15px; }
+        .sel-item { background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 18px; border-radius: 15px; display: flex; justify-content: space-between; margin-bottom: 10px; }
+        
+        /* FOOTER CONTROLS */
+        .totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .stat-box { background: #f9fafb; padding: 15px; border-radius: 15px; border: 1px solid #e5e7eb; }
+        .stat-box small { color: #6b7280; font-size: 12px; display: block; }
+        .stat-box strong { font-size: 18px; color: var(--dark); }
 
+        .btn { border: none; padding: 15px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.3s; flex: 1; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-green { background: var(--green); color: #fff; }
+        .btn-dark { background: var(--dark); color: #fff; }
+        .btn:active { transform: scale(0.95); }
 
+        /* COMPARE RESULTS */
+        .pkg-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
+        .pkg-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        .match-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 900; }
 
-
-@keyframes shine{
-
-  0%{
-    background-position:0% center;
-  }
-
-  100%{
-    background-position:200% center;
-  }
-
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
-  font-family:Arial,sans-serif;
-  background:#f3f6fb;
-  color:#111827;
-}
-
-.layout{
-  display:flex;
-  min-height:100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-  width:260px;
-  background:#111827;
-  color:#fff;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.logo{
-  font-size:24px;
-  font-weight:900;
-  margin-bottom:20px;
-}
-
-.tab-btn{
-  border:none;
-  background:#1f2937;
-  color:#fff;
-  padding:14px;
-  border-radius:14px;
-  text-align:right;
-  cursor:pointer;
-  font-size:15px;
-  font-weight:700;
-  transition:.2s;
-}
-
-.tab-btn:hover{
-  background:#2563eb;
-}
-
-.tab-btn.active{
-  background:#2563eb;
-}
-
-/* CONTENT */
-
-.content{
-  flex:1;
-  padding:20px;
-}
-
-.tab-content{
-  display:none;
-}
-
-.tab-content.active{
-  display:block;
-}
-
-.card{
-  background:#fff;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.06);
-  margin-bottom:20px;
-}
-
-h1,h2{
-  margin-bottom:12px;
-}
-
-p{
-  color:#6b7280;
-  margin-bottom:20px;
-  line-height:1.7;
-}
-
-input,
-textarea{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid #d1d5db;
-  font-size:16px;
-  outline:none;
-}
-
-input:focus,
-textarea:focus{
-  border-color:#2563eb;
-  box-shadow:0 0 0 4px rgba(37,99,235,.12);
-}
-
-.results{
-  margin-top:14px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.item{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  cursor:pointer;
-}
-
-.item:hover{
-  background:#eff6ff;
-}
-
-.price{
-  color:#059669;
-  font-weight:900;
-}
-
-.selected-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.selected-item{
-  background:#eff6ff;
-  border:1px solid #dbeafe;
-  border-radius:14px;
-  padding:12px 14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.remove-btn{
-  border:none;
-  background:#fee2e2;
-  color:#b91c1c;
-  padding:8px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:700;
-}
-
-button.main-btn{
-  border:none;
-  background:#2563eb;
-  color:#fff;
-  padding:14px;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:800;
-  margin-top:14px;
-}
-
-button.dark{
-  background:#111827;
-}
-
-button.green{
-  background:#059669;
-}
-
-.empty{
-  text-align:center;
-  padding:20px;
-  color:#6b7280;
-  border:1px dashed #d1d5db;
-  border-radius:14px;
-}
-
-.compare-item{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:12px;
-}
-
-.compare-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
-
-.percent{
-  background:#dbeafe;
-  color:#1d4ed8;
-  padding:6px 10px;
-  border-radius:999px;
-  font-weight:900;
-}
-
-.green-percent{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.orange-percent{
-  background:#ffedd5;
-  color:#c2410c;
-}
-
-textarea{
-  min-height:140px;
-}
-
-.totals{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
-  margin-top:20px;
-}
-
-.box{
-  background:#f8fafc;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
-  padding:14px;
-}
-
-.box span{
-  display:block;
-  color:#6b7280;
-  margin-bottom:6px;
-  font-size:13px;
-}
-
-.box strong{
-  font-size:22px;
-}
-
-.green-text{
-  color:#059669;
-}
-
-@media(max-width:900px){
-
-  .layout{
-    flex-direction:column;
-  }
-
-  .sidebar{
-    width:100%;
-    flex-direction:row;
-    overflow:auto;
-  }
-
-}
-
-</style>
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 768px) { .layout { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; overflow-x: auto; } }
+    </style>
 </head>
-
 <body>
 
 <div class="layout">
-
-  <!-- SIDEBAR -->
-
-  <div class="sidebar">
-
-  <div class="logo">
-    <div style="
-      font-size:26px;
-      font-weight:900;
-      letter-spacing:1px;
-      color:#ffffff;
-      text-shadow:
-        0 0 8px rgba(255,255,255,.5),
-        0 0 18px rgba(37,99,235,.8),
-        0 0 30px rgba(37,99,235,.7);
-    ">
-      MOZMEN LAB
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-box">
+            <div class="logo-main">MOZMEN LAB</div>
+            <div class="logo-sub">DEVELOPMENT BY MOSTAFA</div>
+        </div>
+        <button class="tab-btn active" data-target="pricing">💰 تسعير التحاليل</button>
+        <button class="tab-btn" data-target="compare">🔍 مقارنة الباقات</button>
     </div>
 
-    <div style="
-      margin-top:8px;
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      background:linear-gradient(
-        90deg,
-        #ffffff,
-        #60a5fa,
-        #ffffff
-      );
-      background-size:200% auto;
-      color:transparent;
-      -webkit-background-clip:text;
-      background-clip:text;
-      animation:shine 3s linear infinite;
-    ">
-      Development By Mostafa
+    <!-- Main Content -->
+    <div class="content">
+        
+        <!-- SECTION 1: PRICING -->
+        <div id="pricing" class="tab-content active">
+            <div class="card">
+                <h1>💰 نظام التسعير السريع</h1>
+                <input type="text" id="pricingSearch" placeholder="ابحث باسم التحليل (مثال: CBC)..." />
+                <div id="pricingResults" class="results-box"></div>
+            </div>
+
+            <div class="card">
+                <h2>📋 قائمة الفحص</h2>
+                <div id="chosenList" class="selected-list"></div>
+                <div style="margin-top: 15px;">
+                    <label>نسبة الخصم (%)</label>
+                    <input type="number" id="discountInput" value="0" min="0" max="100">
+                </div>
+                <div class="totals-grid">
+                    <div class="stat-box"><small>قبل الخصم</small><strong id="totalBefore">0 EGP</strong></div>
+                    <div class="stat-box"><small>قيمة الخصم</small><strong id="discAmount">0 EGP</strong></div>
+                    <div class="stat-box"><small>الإجمالي النهائي</small><strong id="totalAfter" style="color:var(--green)">0 EGP</strong></div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn btn-green" id="copyBtn">نسخ الفاتورة</button>
+                    <button class="btn btn-dark" id="clearPricing">مسح الكل</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: COMPARE -->
+        <div id="compare" class="tab-content">
+            <div class="card">
+                <h1>🔍 أين توجد هذه التحاليل؟</h1>
+                <p style="font-size:13px; color:#6b7280;">أضف تحاليل المستخدم هنا لنقترح له أفضل الباقات الموفرة.</p>
+                <input type="text" id="compareSearch" placeholder="ابحث عن تحاليل لإضافتها للمقارنة..." />
+                <div id="compareSearchRes" class="results-box"></div>
+            </div>
+
+            <div class="card">
+                <h2>🛠️ التحاليل المطلوب فحصها</h2>
+                <div id="compareChosenList" class="selected-list"></div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn btn-primary" onclick="runComparison()">بدء تحليل الباقات</button>
+                    <button class="btn btn-dark" id="clearCompare">مسح الكل</button>
+                </div>
+            </div>
+
+            <div id="finalComparisonResults"></div>
+        </div>
+
     </div>
-  </div>
-
-  <button class="tab-btn active" data-tab="pricingTab">
-    💰 التسعير
-  </button>
-
-  <button class="tab-btn" data-tab="compareTab">
-    🔍 البحث داخل الباقات
-  </button>
-
 </div>
 
-  <!-- CONTENT -->
-
-  <div class="content">
-
-    <!-- PRICING -->
-
-    <div class="tab-content active" id="pricingTab">
-
-      <div class="card">
-
-        <h1>تسعير التحاليل</h1>
-
-        <p>
-          ابحث عن التحليل واضغط عليه للإضافة
-        </p>
-
-        <input
-          type="text"
-          id="search"
-          placeholder="ابحث عن تحليل..."
-          autocomplete="off"
-        />
-
-        <div id="results" class="results">
-
-          <div class="empty">
-            ابدأ بكتابة اسم التحليل
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <h2>التحاليل المختارة</h2>
-
-        <div id="selectedList" class="selected-list">
-
-          <div class="empty">
-            لا توجد تحاليل مختارة
-          </div>
-
-        </div>
-
-        <div style="margin-top:20px;">
-
-          <label style="display:block;margin-bottom:8px;font-weight:700;">
-            نسبة الخصم %
-          </label>
-
-          <input
-            type="number"
-            id="discount"
-            value="0"
-            min="0"
-            max="100"
-          />
-
-        </div>
-
-        <!-- TOTALS -->
-
-        <div class="totals">
-
-          <div class="box">
-
-            <span>
-              الإجمالي قبل الخصم
-            </span>
-
-            <strong id="subtotal">
-              0 EGP
-            </strong>
-
-          </div>
-
-          <div class="box">
-
-            <span>
-              قيمة الخصم
-            </span>
-
-            <strong id="discountValue">
-              0 EGP
-            </strong>
-
-          </div>
-
-          <div class="box">
-
-            <span>
-              الإجمالي بعد الخصم
-            </span>
-
-            <strong
-              id="totalAfter"
-              class="green-text"
-            >
-              0 EGP
-            </strong>
-
-          </div>
-
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-
-          <button
-            id="copyAll"
-            class="main-btn green"
-          >
-            نسخ التقرير
-          </button>
-
-          <button
-            id="clearAll"
-            class="main-btn dark"
-          >
-            مسح الكل
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- COMPARE -->
-
-    <div class="tab-content" id="compareTab">
-
-      <div class="card">
-
-        <h1>🔍 أين يوجد هذا التحليل؟</h1>
-
-        <p>
-          ابحث عن التحليل واضغط عليه للإضافة
-        </p>
-
-        <input
-          type="text"
-          id="compareSearch"
-          placeholder="ابحث عن تحليل..."
-          autocomplete="off"
-        />
-
-        <div id="compareSearchResults" class="results">
-
-          <div class="empty">
-            ابدأ بكتابة اسم التحليل
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <h2>
-          التحاليل المطلوبة
-        </h2>
-
-        <div id="compareSelectedList" class="selected-list">
-
-          <div class="empty">
-            لا توجد تحاليل
-          </div>
-
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-
-          <button
-            id="compareBtn"
-            class="main-btn"
-          >
-            مقارنة الباقات
-          </button>
-
-          <button
-            id="clearCompare"
-            class="main-btn dark"
-          >
-            مسح الكل
-          </button>
-
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <h2>
-          نتائج المقارنة
-        </h2>
-
-        <div id="compareResults">
-
-          <div class="empty">
-            أضف التحاليل ثم اضغط مقارنة
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-
-const SUPABASE_URL =
-"https://ezawuhkjdghyfekoezbq.supabase.co";
-
-const SUPABASE_ANON_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo";
-
-const client =
-supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-/* ======================
-   TABS
-====================== */
-
-document
-.querySelectorAll(".tab-btn")
-.forEach(btn=>{
-
-  btn.addEventListener("click",()=>{
-
-    document
-    .querySelectorAll(".tab-btn")
-    .forEach(x=>
-      x.classList.remove("active")
-    );
-
-    document
-    .querySelectorAll(".tab-content")
-    .forEach(x=>
-      x.classList.remove("active")
-    );
-
-    btn.classList.add("active");
-
-    document
-    .getElementById(btn.dataset.tab)
-    .classList.add("active");
-
-  });
-
-});
-
-/* ======================
-   PRICING
-====================== */
-
-const searchInput =
-document.getElementById("search");
-
-const resultsDiv =
-document.getElementById("results");
-
-const selectedList =
-document.getElementById("selectedList");
-
-const discountInput =
-document.getElementById("discount");
-
-const subtotalEl =
-document.getElementById("subtotal");
-
-const discountValueEl =
-document.getElementById("discountValue");
-
-const totalAfterEl =
-document.getElementById("totalAfter");
-
-let selectedTests = [];
-
-function formatEGP(v){
-
-  return Number(v || 0)
-    .toLocaleString("en-EG")
-    + " EGP";
-
-}
-
-let ALL_TESTS = [];
-let ALL_PACKAGES = [];
-let ALL_PACKAGE_TESTS = [];
-
-async function loadAllData(){
-
-  const [testsRes, packagesRes, packageTestsRes] =
-    await Promise.all([
-      client.from("tests").select("*"),
-      client.from("packages").select("*"),
-      client.from("package_tests").select("*")
-    ]);
-
-  ALL_TESTS = testsRes.data || [];
-  ALL_PACKAGES = packagesRes.data || [];
-  ALL_PACKAGE_TESTS = packageTestsRes.data || [];
-}
-
-loadAllData().then(() => {
-  console.log("Data loaded successfully");
-});
-
-async function searchTests(query){
-
-  const q =
-    query.trim().toLowerCase();
-
-  if(!q){
-
-    resultsDiv.innerHTML = `
-      <div class="empty">
-        ابدأ بكتابة اسم التحليل
-      </div>
-    `;
-
-    return;
-  }
-
-  const filtered =
-    ALL_TESTS
-    .filter(item =>
-      item.name
-      .toLowerCase()
-      .includes(q)
-    )
-    .slice(0,10);
-
-  if(!filtered.length){
-
-    resultsDiv.innerHTML = `
-      <div class="empty">
-        لا توجد نتائج
-      </div>
-    `;
-
-    return;
-  }
-
-  resultsDiv.innerHTML =
-    filtered.map(item=>`
-
-      <div
-        class="item"
-        onclick="addTest(
-          ${item.id},
-          '${item.name.replace(/'/g,"\\\\'")}',
-          ${item.price}
-        )"
-      >
-
-        <div>
-
-          <div>
-            <strong>
-              ${item.name}
-            </strong>
-          </div>
-
-          <div class="price">
-            ${formatEGP(item.price)}
-          </div>
-
-        </div>
-
-        <div>
-          اضغط للإضافة
-        </div>
-
-      </div>
-
-    `).join("");
-
-}
-
-function addTest(id,name,price){
-
-  const exists =
-    selectedTests.some(x=>x.id===id);
-
-  if(exists) return;
-
-  selectedTests.push({
-    id,name,price
-  });
-
-  renderSelected();
-
-  calculateTotals();
-
-  searchInput.value = "";
-
-  searchTests("");
-
-}
-
-function renderSelected(){
-
-  if(!selectedTests.length){
-
-    selectedList.innerHTML = `
-      <div class="empty">
-        لا توجد تحاليل مختارة
-      </div>
-    `;
-
-    return;
-  }
-
-  selectedList.innerHTML =
-    selectedTests.map(item=>`
-
-      <div class="selected-item">
-
-        <div>
-
-          <strong>
-            ${item.name}
-          </strong>
-
-          <div class="price">
-            ${formatEGP(item.price)}
-          </div>
-
-        </div>
-
-        <button
-          class="remove-btn"
-          onclick="removeTest(${item.id})"
-        >
-          حذف
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
-
-function removeTest(id){
-
-  selectedTests =
-    selectedTests.filter(x=>x.id!==id);
-
-  renderSelected();
-
-  calculateTotals();
-
-}
-
-function calculateTotals(){
-
-  const subtotal =
-    selectedTests.reduce(
-      (sum,item)=>
-        sum + Number(item.price || 0),
-      0
-    );
-
-  const discountPercent =
-    Number(discountInput.value || 0);
-
-  const discountValue =
-    subtotal * (discountPercent / 100);
-
-  const totalAfter =
-    subtotal - discountValue;
-
-  subtotalEl.textContent =
-    formatEGP(subtotal);
-
-  discountValueEl.textContent =
-    formatEGP(discountValue);
-
-  totalAfterEl.textContent =
-    formatEGP(totalAfter);
-
-}
-
-searchInput.addEventListener(
-  "input",
-  e=>{
-
-    searchTests(e.target.value);
-
-  }
-);
-
-discountInput.addEventListener(
-  "input",
-  calculateTotals
-);
-
-/* ======================
-   CLEAR
-====================== */
-
-document
-.getElementById("clearAll")
-.addEventListener("click",()=>{
-
-  selectedTests = [];
-
-  renderSelected();
-
-  calculateTotals();
-
-});
-
-/* ======================
-   COPY REPORT
-====================== */
-
-document
-.getElementById("copyAll")
-.addEventListener("click",()=>{
-
-  if(!selectedTests.length){
-
-    alert("لا توجد تحاليل");
-
-    return;
-  }
-
-  const subtotal =
-    selectedTests.reduce(
-      (s,i)=>s+Number(i.price||0),
-      0
-    );
-
-  const discountPercent =
-    Number(discountInput.value||0);
-
-  const discountValue =
-    subtotal * (discountPercent/100);
-
-  const totalAfter =
-    subtotal - discountValue;
-
-  let text =
-`📋 تسعير التحاليل
-
-`;
-
-  selectedTests.forEach((item,index)=>{
-
-    text +=
-`${index+1}- ${item.name} — ${formatEGP(item.price)}
-`;
-
-  });
-
-  text += `
-💰 قبل الخصم: ${formatEGP(subtotal)}
-🎯 الخصم: ${discountPercent}%
-🔻 قيمة الخصم: ${formatEGP(discountValue)}
-━━━━━━━━━━━━
-✅ الاجمالي بعد الخصم: ${formatEGP(totalAfter)}
-`;
-
-  const textarea =
-    document.createElement("textarea");
-
-  textarea.value = text;
-
-  document.body.appendChild(textarea);
-
-  textarea.select();
-
-  document.execCommand("copy");
-
-  document.body.removeChild(textarea);
-
-  alert("تم نسخ التقرير");
-
-});
-
-/* ======================
-   COMPARE
-====================== */
-
-const compareSearch =
-document.getElementById("compareSearch");
-
-const compareSearchResults =
-document.getElementById("compareSearchResults");
-
-const compareSelectedList =
-document.getElementById("compareSelectedList");
-
-let compareSelectedTests = [];
-
-async function searchCompareTests(query){
-
-  const q = query.trim();
-
-  if(!q){
-
-    compareSearchResults.innerHTML = `
-      <div class="empty">
-        ابدأ بكتابة اسم التحليل
-      </div>
-    `;
-
-    return;
-  }
-
-  try{
-
-    const { data, error } =
-      await client
-      .from("tests")
-      .select("id,name")
-      .ilike("name", `%${q}%`)
-      .limit(10);
-
-    if(error) throw error;
-
-    if(!data.length){
-
-      compareSearchResults.innerHTML = `
-        <div class="empty">
-          لا توجد نتائج
-        </div>
-      `;
-
-      return;
+    // Config
+    const S_URL = "https://ezawuhkjdghyfekoezbq.supabase.co";
+    const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo";
+    const supabaseClient = supabase.createClient(S_URL, S_KEY);
+
+    // Data Store
+    let DB = { tests: [], packages: [], relations: [] };
+    let pricingSelection = [];
+    let compareSelection = [];
+
+    // Initialize Data (Fetch everything at once for speed)
+    async function init() {
+        const [t, p, r] = await Promise.all([
+            supabaseClient.from('tests').select('*'),
+            supabaseClient.from('packages').select('*'),
+            supabaseClient.from('package_tests').select('*')
+        ]);
+        DB.tests = t.data || [];
+        DB.packages = p.data || [];
+        DB.relations = r.data || [];
+        console.log("Database Sync Ready");
     }
-
-    compareSearchResults.innerHTML =
-      data.map(item=>`
-
-      <div
-        class="item"
-        onclick="addCompareTest(
-          ${item.id},
-          '${item.name.replace(/'/g,"\\'")}'
-        )"
-      >
-
-        <div>
-          <strong>
-            ${item.name}
-          </strong>
-        </div>
-
-        <div>
-          اضغط للإضافة
-        </div>
-
-      </div>
-
-    `).join("");
-
-  }catch(err){
-
-    console.error(err);
-
-  }
-
-}
-
-function addCompareTest(id,name){
-
-  const exists =
-    compareSelectedTests.some(
-      x=>x.id===id
-    );
-
-  if(exists) return;
-
-  compareSelectedTests.push({
-    id,name
-  });
-
-  renderCompareSelected();
-
-  compareSearch.value = "";
-
-  searchCompareTests("");
-
-}
-
-function renderCompareSelected(){
-
-  if(!compareSelectedTests.length){
-
-    compareSelectedList.innerHTML = `
-      <div class="empty">
-        لا توجد تحاليل
-      </div>
-    `;
-
-    return;
-  }
-
-  compareSelectedList.innerHTML =
-    compareSelectedTests.map(item=>`
-
-      <div class="selected-item">
-
-        <div>
-
-          <strong>
-            ${item.name}
-          </strong>
-
-        </div>
-
-        <button
-          class="remove-btn"
-          onclick="removeCompareTest(${item.id})"
-        >
-          حذف
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
-
-function removeCompareTest(id){
-
-  compareSelectedTests =
-    compareSelectedTests.filter(
-      x=>x.id!==id
-    );
-
-  renderCompareSelected();
-
-}
-
-compareSearch.addEventListener(
-  "input",
-  e=>{
-
-    clearTimeout(window.compareDebounce);
-
-    window.compareDebounce =
-      setTimeout(()=>{
-
-        searchCompareTests(
-          e.target.value
-        );
-
-      },300);
-
-  }
-);
-
-document
-.getElementById("clearCompare")
-.addEventListener("click",()=>{
-
-  compareSelectedTests = [];
-
-  renderCompareSelected();
-
-});
-
-document
-.getElementById("compareBtn")
-.addEventListener("click",comparePackages);
-
-function removeCompareTest(id){
-
-  compareSelectedTests =
-    compareSelectedTests.filter(
-      x=>x.id!==id
-    );
-
-  renderCompareSelected();
-
-}
-
-compareSearch.addEventListener(
-  "input",
-  e=>{
-
-    clearTimeout(window.compareDebounce);
-
-    window.compareDebounce =
-      setTimeout(()=>{
-
-        searchCompareTests(
-          e.target.value
-        );
-
-      },300);
-
-  }
-);
-
-document
-.getElementById("clearCompare")
-.addEventListener("click",()=>{
-
-  compareSelectedTests = [];
-
-  renderCompareSelected();
-
-});
-
-document
-.getElementById("compareBtn")
-.addEventListener("click",comparePackages);
-
-async function fetchAllRows(tableName) {
-
-  const pageSize = 1000;
-  let from = 0;
-  let allRows = [];
-
-  while (true) {
-
-    const { data, error } = await client
-      .from(tableName)
-      .select("*")
-      .range(from, from + pageSize - 1);
-
-    if (error) throw error;
-
-    if (data && data.length) {
-      allRows = allRows.concat(data);
-    }
-
-    if (!data || data.length < pageSize) break;
-
-    from += pageSize;
-  }
-
-  return allRows;
-}
-
-async function comparePackages() {
-  if (!compareSelectedTests.length) {
-    alert("أضف التحاليل");
-    return;
-  }
-
-  const compareResults = document.getElementById("compareResults");
-  compareResults.innerHTML = `<div class="empty">جاري المقارنة...</div>`;
-
-  try {
-    const packages = await fetchAllRows("packages");
-    const packageTests = await fetchAllRows("package_tests");
-    const testsData = await fetchAllRows("tests");
-
-    if (!packages || !packages.length) {
-      compareResults.innerHTML = `<div class="empty">لا توجد باقات في قاعدة البيانات</div>`;
-      return;
-    }
-
-    function normalizeName(text) {
-      return String(text || "")
-        .toLowerCase()
-        .normalize("NFKD")
-        .replace(/[\u064B-\u065F]/g, "")
-        .replace(/[^a-z0-9\u0600-\u06FF]+/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-
-    function isMatch(a, b) {
-      const aa = normalizeName(a);
-      const bb = normalizeName(b);
-
-      if (!aa || !bb) return false;
-      if (aa === bb) return true;
-      if (aa.includes(bb)) return true;
-      if (bb.includes(aa)) return true;
-
-      const aWords = aa.split(" ").filter(Boolean);
-      const bWords = bb.split(" ").filter(Boolean);
-
-      return aWords.some((w) => bWords.includes(w) && w.length > 1);
-    }
-
-    const testIdToName = {};
-    (testsData || []).forEach((t) => {
-      testIdToName[Number(t.id)] = t.name || "";
-    });
-
-    const selectedSubtotal = compareSelectedTests.reduce((sum, item) => {
-      const found = (testsData || []).find(
-        (x) => Number(x.id) === Number(item.id)
-      );
-      return sum + Number(found?.price || 0);
-    }, 0);
-
-    const results = [];
-
-    packages.forEach((pkg) => {
-      const pkgTests = (packageTests || []).filter(
-        (x) => Number(x.package_id) === Number(pkg.id)
-      );
-
-      const pkgTestNames = pkgTests
-        .map((p) => testIdToName[Number(p.test_id)] || "")
-        .filter(Boolean);
-
-      const matchedTests = compareSelectedTests.filter((test) =>
-        pkgTestNames.some((pkgName) => isMatch(pkgName, test.name))
-      );
-
-      const missingTests = compareSelectedTests.filter(
-        (test) => !matchedTests.some((m) => Number(m.id) === Number(test.id))
-      );
-
-      const percent = Math.round(
-        (matchedTests.length / compareSelectedTests.length) * 100
-      );
-
-      if (matchedTests.length > 0) {
-        results.push({
-          ...pkg,
-          percent,
-          matchedTests,
-          missingTests,
-          totalTests: pkgTests.length,
-          savings: selectedSubtotal - Number(pkg.price || 0),
+    init();
+
+    // Utility
+    const fmt = (num) => Number(num).toLocaleString('en-EG') + " EGP";
+
+    // Tab Switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.target).classList.add('active');
         });
-      }
     });
 
-    results.sort((a, b) => {
-      if (b.percent !== a.percent) return b.percent - a.percent;
-      if (b.matchedTests.length !== a.matchedTests.length) {
-        return b.matchedTests.length - a.matchedTests.length;
-      }
-      return Number(a.price || 0) - Number(b.price || 0);
+    // PRICING SEARCH
+    document.getElementById('pricingSearch').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const results = DB.tests.filter(x => x.name.toLowerCase().includes(term)).slice(0, 15);
+        const container = document.getElementById('pricingResults');
+        container.innerHTML = term ? results.map(item => `
+            <div class="test-item" onclick="addToPricing(${item.id})">
+                <span>${item.name}</span>
+                <span class="match-badge" style="background:#e0f2fe; color:#0369a1">${fmt(item.price)}</span>
+            </div>
+        `).join('') : '';
     });
 
-    if (!results.length) {
-      compareResults.innerHTML = `<div class="empty">لا توجد نتائج</div>`;
-      return;
+    function addToPricing(id) {
+        if(pricingSelection.find(x => x.id === id)) return;
+        pricingSelection.push(DB.tests.find(x => x.id === id));
+        updatePricingUI();
     }
 
-    compareResults.innerHTML = results
-      .map((item) => {
-        const percentClass =
-          item.percent === 100
-            ? "green-percent"
-            : item.percent >= 60
-            ? ""
-            : "orange-percent";
-
-        const savingsText =
-          item.savings > 0
-            ? `<div style="color:#059669;font-weight:800;margin-top:6px;">💸 توفير: ${formatEGP(item.savings)}</div>`
-            : item.savings < 0
-            ? `<div style="color:#dc2626;font-weight:800;margin-top:6px;">⚠️ الباقة أغلى بـ ${formatEGP(Math.abs(item.savings))}</div>`
-            : "";
-
-        return `
-          <div class="compare-item">
-            <div class="compare-top">
-              <div>
-                <strong>${item.name}</strong>
-                <div class="price">${formatEGP(item.price)}</div>
-                ${savingsText}
-              </div>
-
-              <div class="percent ${percentClass}">
-                ${item.percent}%
-              </div>
+    function updatePricingUI() {
+        const list = document.getElementById('chosenList');
+        list.innerHTML = pricingSelection.map(x => `
+            <div class="sel-item">
+                <strong>${x.name}</strong>
+                <div>
+                    <span style="margin-left:15px;">${fmt(x.price)}</span>
+                    <button onclick="removeFromPricing(${x.id})" style="border:none; color:red; cursor:pointer; background:none;">حذف</button>
+                </div>
             </div>
+        `).join('');
+        
+        // Calculations
+        const before = pricingSelection.reduce((a,b) => a + b.price, 0);
+        const discPerc = document.getElementById('discountInput').value;
+        const discVal = before * (discPerc/100);
+        const final = before - discVal;
 
-            <div style="margin-bottom:12px;">
-              <strong>✅ التحاليل الموجودة:</strong>
-              <div style="margin-top:6px;color:#059669;">
-                ${
-                  item.matchedTests.length
-                    ? item.matchedTests.map((x) => x.name).join(" - ")
-                    : "لا يوجد"
-                }
-              </div>
+        document.getElementById('totalBefore').innerText = fmt(before);
+        document.getElementById('discAmount').innerText = fmt(discVal);
+        document.getElementById('totalAfter').innerText = fmt(final);
+    }
+
+    window.removeFromPricing = (id) => {
+        pricingSelection = pricingSelection.filter(x => x.id !== id);
+        updatePricingUI();
+    };
+
+    document.getElementById('discountInput').addEventListener('input', updatePricingUI);
+
+    // COMPARE SEARCH
+    document.getElementById('compareSearch').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const results = DB.tests.filter(x => x.name.toLowerCase().includes(term)).slice(0, 10);
+        const container = document.getElementById('compareSearchRes');
+        container.innerHTML = term ? results.map(item => `
+            <div class="test-item" onclick="addToCompare(${item.id})">
+                <span>${item.name}</span>
+                <span style="font-size:11px; color:#3b82f6;">+ إضافة للمقارنة</span>
             </div>
+        `).join('') : '';
+    });
 
-            <div style="margin-bottom:12px;">
-              <strong>❌ التحاليل الناقصة:</strong>
-              <div style="margin-top:6px;color:#dc2626;">
-                ${
-                  item.missingTests.length
-                    ? item.missingTests.map((x) => x.name).join(" - ")
-                    : "لا يوجد"
-                }
-              </div>
+    function addToCompare(id) {
+        if(compareSelection.find(x => x.id === id)) return;
+        compareSelection.push(DB.tests.find(x => x.id === id));
+        document.getElementById('compareChosenList').innerHTML = compareSelection.map(x => `
+            <div class="sel-item">
+                <span>${x.name}</span>
+                <button onclick="removeFromCompare(${x.id})" style="border:none; color:red; cursor:pointer; background:none;">حذف</button>
             </div>
+        `).join('');
+    }
 
-            <div>
-              عدد التحاليل داخل الباقة:
-              <strong>${item.totalTests}</strong>
+    window.removeFromCompare = (id) => {
+        compareSelection = compareSelection.filter(x => x.id !== id);
+        addToCompare(); // Refresh list
+    };
+
+    // CORE COMPARISON ENGINE (Logic)
+    window.runComparison = () => {
+        if(compareSelection.length === 0) return alert("اختر تحاليل أولاً");
+        
+        const testIds = compareSelection.map(x => x.id);
+        
+        // Find how each package matches
+        const analysis = DB.packages.map(pkg => {
+            const pkgTests = DB.relations.filter(r => r.package_id === pkg.id).map(r => r.test_id);
+            const common = pkgTests.filter(id => testIds.includes(id));
+            const matchPerc = Math.round((common.length / testIds.length) * 100);
+            return { ...pkg, matchCount: common.length, percentage: matchPerc, totalPkgTests: pkgTests.length };
+        })
+        .filter(p => p.matchCount > 0)
+        .sort((a,b) => b.percentage - a.percentage || a.price - b.price);
+
+        const resDiv = document.getElementById('finalComparisonResults');
+        resDiv.innerHTML = '<h2>النتائج المقترحة</h2>' + (analysis.length ? analysis.map(p => `
+            <div class="pkg-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="color:var(--primary)">${p.name}</h3>
+                        <small>تحتوي على ${p.matchCount} من أصل ${compareSelection.length} تحاليل مطلوبة</small>
+                    </div>
+                    <span class="match-badge">${p.percentage}% مطابقة</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                    <span style="font-weight:900; color:var(--green); font-size:20px;">${fmt(p.price)}</span>
+                    <span style="font-size:12px; color:#9ca3af;">إجمالي محتوى الباقة: ${p.totalPkgTests}</span>
+                </div>
             </div>
-          </div>
-        `;
-      })
-      .join("");
-  } catch (err) {
-    console.error(err);
-    compareResults.innerHTML = `<div class="empty">حدث خطأ أثناء المقارنة</div>`;
-  }
-}
-renderSelected();
+        `).join('') : '<div class="card">لا توجد باقة تحتوي على هذه التحاليل.</div>');
+    };
 
-calculateTotals();
+    // Copying Report
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        if(!pricingSelection.length) return;
+        let t = "📋 تقرير تسعير معامل MOZMEN\n\n";
+        pricingSelection.forEach((x, i) => t += `${i+1}. ${x.name} : ${fmt(x.price)}\n`);
+        t += `\n💰 الإجمالي: ${document.getElementById('totalBefore').innerText}`;
+        t += `\n🎯 الخصم: ${document.getElementById('discountInput').value}%`;
+        t += `\n✅ الصافي النهائي: ${document.getElementById('totalAfter').innerText}`;
+        
+        navigator.clipboard.writeText(t);
+        alert("تم نسخ التقرير بنجاح");
+    });
+
+    // Clear Functions
+    document.getElementById('clearPricing').addEventListener('click', () => { pricingSelection = []; updatePricingUI(); });
+    document.getElementById('clearCompare').addEventListener('click', () => { 
+        compareSelection = []; 
+        document.getElementById('compareChosenList').innerHTML = ''; 
+        document.getElementById('finalComparisonResults').innerHTML = '';
+    });
 
 </script>
-
 </body>
 </html>
