@@ -295,32 +295,51 @@
     window.delCompItem = (id) => { compareArr = compareArr.filter(x => x.id !== id); renderCompare(); };
 
     function processComparison() {
-        if(!compareArr.length) return;
-        const testIds = compareArr.map(x => x.id);
-        const finalResults = STORE.packages.map(p => {
-            const rels = STORE.relations.filter(r => r.package_id === p.id).map(r => r.test_id);
-            const matches = rels.filter(id => testIds.includes(id));
-            const perc = Math.round((matches.length / testIds.length) * 100);
-            return { ...p, matchCount: matches.length, percentage: perc, totalInPkg: rels.length };
-        }).filter(x => x.matchCount > 0).sort((a,b) => b.percentage - a.percentage || a.price - b.price);
+    if (!compareArr.length) {
+        alert("يرجى إضافة تحاليل أولاً للمقارنة");
+        return;
+    }
+    
+    const testIds = compareArr.map(x => x.id);
 
-        const out = document.getElementById('finalComparison');
-        out.innerHTML = `<h2 style="margin-top:20px;">أفضل العروض المتاحة</h2>` + finalResults.map(p => `
-            <div class="pkg-card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
-                        <small style="color:grey">تغطي ${p.matchCount} تحليلاً من طلبك</small>
-                    </div>
+    // حساب المطابقة والبيانات لكل باقة
+    const finalResults = STORE.packages.map(p => {
+        const rels = STORE.relations.filter(r => r.package_id === p.id).map(r => r.test_id);
+        const matches = rels.filter(id => testIds.includes(id));
+        const perc = Math.round((matches.length / testIds.length) * 100);
+        return { ...p, matchCount: matches.length, percentage: perc, totalInPkg: rels.length };
+    })
+    .filter(x => x.matchCount > 0) // عرض الباقات التي تحتوي على تحليل واحد على الأقل
+    .sort((a, b) => a.price - b.price) // الترتيب من السعر الأرخص للأغلى
+    .slice(0, 5); // الاكتفاء بأرخص 5 باقات فقط
+
+    const out = document.getElementById('finalComparison');
+    
+    if (finalResults.length === 0) {
+        out.innerHTML = `<div class="empty">لم يتم العثور على باقات تحتوي على هذه التحاليل</div>`;
+        return;
+    }
+
+    out.innerHTML = `
+        <h2 style="margin-top:20px; font-size:18px;">📉 أرخص 5 باقات توفر لك هذه التحاليل:</h2>
+        ` + finalResults.map(p => `
+        <div class="pkg-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
+                    <small style="color:grey">تغطي ${p.matchCount} تحليلاً من طلبك</small>
+                </div>
+                <div style="text-align:left;">
                     <span class="match-badge">${p.percentage}% مطابقة</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
-                    <strong style="color:var(--green); font-size:18px;">${egp(p.price)}</strong>
-                    <span style="font-size:11px; color:grey;">المحتوى الكلي: ${p.totalInPkg} تحليل</span>
-                </div>
             </div>
-        `).join('');
-    }
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                <strong style="color:var(--green); font-size:18px;">${egp(p.price)}</strong>
+                <span style="font-size:11px; color:grey;">المحتوى الكلي: ${p.totalInPkg} تحليل</span>
+            </div>
+        </div>
+    `).join('');
+}
 
     function clearComparison() { compareArr = []; renderCompare(); document.getElementById('finalComparison').innerHTML = ''; }
 
