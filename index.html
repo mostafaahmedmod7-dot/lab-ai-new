@@ -350,7 +350,7 @@
         pricingArr.forEach((x, i) => text += `${i+1}- ${x.name} (${egp(x.price)})\n`);
         text += `\n💰 الإجمالي: ${document.getElementById('totalBefore').innerText}`;
         text += `\n🔻 الخصم: ${document.getElementById('discountValue').value}%`;
-        text += `\n✅ الصافي: ${document.getElementById('totalAfter').innerText}`;
+        text += `\n✅ الاجمالي بعد الخصم: ${document.getElementById('totalAfter').innerText}`;
         navigator.clipboard.writeText(text);
         alert("تم نسخ التقرير");
     });
