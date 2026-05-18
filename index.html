@@ -3,64 +3,91 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MOZMEN LAB SYSTEM | PRO</title>
+    <title>MOZMEN LAB SYSTEM | الإصدار المطور</title>
     <style>
-        /* CSS المتطور والمستجيب */
         :root { --primary: #2563eb; --dark: #111827; --green: #059669; --bg: #f3f6fb; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg); color: var(--dark); line-height: 1.6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: var(--bg); color: var(--dark); overflow-x: hidden; }
+
         .layout { display: flex; min-height: 100vh; }
 
         /* SIDEBAR */
-        .sidebar { width: 280px; background: var(--dark); color: #fff; padding: 25px; display: flex; flex-direction: column; gap: 15px; transition: 0.3s; }
-        .logo-box { margin-bottom: 30px; text-align: center; }
-        .logo-main { font-size: 26px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(37,99,235,0.6); }
-        .logo-sub { font-size: 11px; color: #60a5fa; letter-spacing: 1px; margin-top: 5px; }
-        
-        .tab-btn { 
-            border: none; background: #1f2937; color: #fff; padding: 16px; border-radius: 12px; 
-            text-align: right; cursor: pointer; font-size: 15px; font-weight: 600; transition: 0.3s; 
+        .sidebar { width: 260px; background: var(--dark); color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .logo { padding: 20px 10px; text-align: center; border-bottom: 1px solid #1f2937; margin-bottom: 15px; }
+        .logo h2 { font-size: 22px; color: #fff; text-shadow: 0 0 10px var(--primary); }
+        .logo span { font-size: 10px; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; }
+
+        .tab-btn {
+            border: none; background: #1f2937; color: #fff; padding: 15px; border-radius: 12px;
+            text-align: right; cursor: pointer; font-weight: 600; transition: 0.3s;
         }
         .tab-btn:hover, .tab-btn.active { background: var(--primary); transform: translateX(-5px); }
 
-        /* CONTENT AREA */
-        .content { flex: 1; padding: 30px; max-width: 1200px; margin: 0 auto; }
-        .tab-content { display: none; animation: fadeIn 0.4s; }
+        /* CONTENT */
+        .content { flex: 1; padding: 25px; max-width: 1000px; margin: 0 auto; }
+        .tab-content { display: none; animation: slideIn 0.3s ease-out; }
         .tab-content.active { display: block; }
 
-        .card { background: #fff; border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
-        h1 { font-size: 22px; margin-bottom: 15px; }
-        input { width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid #d1d5db; outline: none; font-size: 16px; transition: 0.3s; }
+        @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+        .card { background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #edf2f7; }
+        h1, h2 { margin-bottom: 15px; font-size: 20px; }
+        p { color: #6b7280; font-size: 14px; margin-bottom: 15px; }
+
+        /* SEARCH INPUT & RESULTS */
+        .search-group { position: relative; }
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1;
+            font-size: 16px; outline: none; transition: 0.2s;
+        }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
 
-        /* LISTS & ITEMS */
-        .results-box { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
-        .test-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .test-item:hover { border-color: var(--primary); background: #eff6ff; }
-        
-        .selected-list { margin-top: 15px; }
-        .sel-item { background: #eff6ff; border: 1px solid #dbeafe; padding: 12px 18px; border-radius: 15px; display: flex; justify-content: space-between; margin-bottom: 10px; }
-        
-        /* FOOTER CONTROLS */
-        .totals-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-        .stat-box { background: #f9fafb; padding: 15px; border-radius: 15px; border: 1px solid #e5e7eb; }
-        .stat-box small { color: #6b7280; font-size: 12px; display: block; }
-        .stat-box strong { font-size: 18px; color: var(--dark); }
+        .results-box {
+            position: absolute; width: 100%; background: #fff; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; margin-top: 5px;
+            max-height: 300px; overflow-y: auto; border: 1px solid #e2e8f0; display: none;
+        }
+        .test-item {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s;
+        }
+        .test-item:hover { background: #f8fafc; color: var(--primary); }
+        .test-item span.price-tag { background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 8px; font-weight: 700; font-size: 14px; }
 
-        .btn { border: none; padding: 15px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.3s; flex: 1; }
-        .btn-primary { background: var(--primary); color: #fff; }
+        /* SELECTED LIST */
+        .list-container { margin-top: 20px; }
+        .item-row {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .remove-btn { color: #ef4444; border: none; background: none; cursor: pointer; font-weight: bold; }
+
+        /* STATS & BUTTONS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+        .stat-card { background: #f1f5f9; padding: 15px; border-radius: 12px; text-align: center; }
+        .stat-card small { display: block; color: #64748b; font-size: 12px; margin-bottom: 5px; }
+        .stat-card strong { font-size: 18px; }
+
+        .action-btns { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { border: none; padding: 14px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.2s; flex: 1; min-width: 120px; }
+        .btn-blue { background: var(--primary); color: #fff; }
         .btn-green { background: var(--green); color: #fff; }
         .btn-dark { background: var(--dark); color: #fff; }
-        .btn:active { transform: scale(0.95); }
+        .btn:active { transform: scale(0.97); }
 
-        /* COMPARE RESULTS */
-        .pkg-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 20px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
-        .pkg-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        .match-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 900; }
+        /* PACKAGE CARDS */
+        .pkg-card {
+            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; margin-top: 15px;
+            transition: 0.3s; animation: slideIn 0.4s;
+        }
+        .pkg-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .match-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        @media (max-width: 768px) { .layout { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; overflow-x: auto; } }
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
+            .content { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -68,63 +95,68 @@
 <div class="layout">
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo-box">
-            <div class="logo-main">MOZMEN LAB</div>
-            <div class="logo-sub">DEVELOPMENT BY MOSTAFA</div>
+        <div class="logo">
+            <h2>MOZMEN LAB</h2>
+            <span>Mostafa Dev Systems</span>
         </div>
-        <button class="tab-btn active" data-target="pricing">💰 تسعير التحاليل</button>
-        <button class="tab-btn" data-target="compare">🔍 مقارنة الباقات</button>
+        <button class="tab-btn active" data-target="pricing-tab">💰 التسعير</button>
+        <button class="tab-btn" data-target="compare-tab">🔍 البحث في الباقات</button>
     </div>
 
-    <!-- Main Content -->
+    <!-- Content Area -->
     <div class="content">
-        
-        <!-- SECTION 1: PRICING -->
-        <div id="pricing" class="tab-content active">
+
+        <!-- TAB: PRICING -->
+        <div id="pricing-tab" class="tab-content active">
             <div class="card">
-                <h1>💰 نظام التسعير السريع</h1>
-                <input type="text" id="pricingSearch" placeholder="ابحث باسم التحليل (مثال: CBC)..." />
-                <div id="pricingResults" class="results-box"></div>
+                <h1>حساب تكلفة التحاليل</h1>
+                <p>اكتب اسم التحليل واختر من القائمة للإضافة السريعة</p>
+                <div class="search-group">
+                    <input type="text" id="mainSearch" placeholder="ابحث هنا عن تحليل (CBC, Glucose...)" autocomplete="off">
+                    <div id="mainResults" class="results-box"></div>
+                </div>
             </div>
 
             <div class="card">
-                <h2>📋 قائمة الفحص</h2>
-                <div id="chosenList" class="selected-list"></div>
-                <div style="margin-top: 15px;">
-                    <label>نسبة الخصم (%)</label>
-                    <input type="number" id="discountInput" value="0" min="0" max="100">
+                <h2>التحاليل المطلوبة</h2>
+                <div id="pricingList" class="list-container"></div>
+                <div style="margin-top: 20px;">
+                    <label style="font-weight: 600;">نسبة الخصم %</label>
+                    <input type="number" id="discountValue" value="0" min="0" max="100" style="margin-top: 8px;">
                 </div>
-                <div class="totals-grid">
-                    <div class="stat-box"><small>قبل الخصم</small><strong id="totalBefore">0 EGP</strong></div>
-                    <div class="stat-box"><small>قيمة الخصم</small><strong id="discAmount">0 EGP</strong></div>
-                    <div class="stat-box"><small>الإجمالي النهائي</small><strong id="totalAfter" style="color:var(--green)">0 EGP</strong></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><small>قبل الخصم</small><strong id="totalBefore">0 EGP</strong></div>
+                    <div class="stat-card"><small>الخصم</small><strong id="saveAmount">0 EGP</strong></div>
+                    <div class="stat-card"><small>الإجمالي</small><strong id="totalAfter" style="color:var(--green)">0 EGP</strong></div>
                 </div>
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button class="btn btn-green" id="copyBtn">نسخ الفاتورة</button>
-                    <button class="btn btn-dark" id="clearPricing">مسح الكل</button>
+                <div class="action-btns">
+                    <button class="btn btn-green" id="copyReport">نسخ التقرير</button>
+                    <button class="btn btn-dark" onclick="clearAllPricing()">مسح الكل</button>
                 </div>
             </div>
         </div>
 
-        <!-- SECTION 2: COMPARE -->
-        <div id="compare" class="tab-content">
+        <!-- TAB: COMPARE -->
+        <div id="compare-tab" class="tab-content">
             <div class="card">
-                <h1>🔍 أين توجد هذه التحاليل؟</h1>
-                <p style="font-size:13px; color:#6b7280;">أضف تحاليل المستخدم هنا لنقترح له أفضل الباقات الموفرة.</p>
-                <input type="text" id="compareSearch" placeholder="ابحث عن تحاليل لإضافتها للمقارنة..." />
-                <div id="compareSearchRes" class="results-box"></div>
-            </div>
-
-            <div class="card">
-                <h2>🛠️ التحاليل المطلوب فحصها</h2>
-                <div id="compareChosenList" class="selected-list"></div>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="btn btn-primary" onclick="runComparison()">بدء تحليل الباقات</button>
-                    <button class="btn btn-dark" id="clearCompare">مسح الكل</button>
+                <h1>البحث الذكي داخل الباقات</h1>
+                <p>أضف التحاليل لمعرفة أي باقة هي الأوفر لهذا العميل.</p>
+                <div class="search-group">
+                    <input type="text" id="compSearch" placeholder="ابحث وأضف تحاليل للمقارنة..." autocomplete="off">
+                    <div id="compResults" class="results-box"></div>
                 </div>
             </div>
 
-            <div id="finalComparisonResults"></div>
+            <div class="card">
+                <h2>التحاليل المضافة للمقارنة</h2>
+                <div id="compList" class="list-container"></div>
+                <div class="action-btns">
+                    <button class="btn btn-blue" onclick="processComparison()">عرض الباقات المناسبة</button>
+                    <button class="btn btn-dark" onclick="clearComparison()">مسح</button>
+                </div>
+            </div>
+
+            <div id="finalComparison" style="margin-bottom: 50px;"></div>
         </div>
 
     </div>
@@ -132,34 +164,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // Config
+    // Database Config
     const S_URL = "https://ezawuhkjdghyfekoezbq.supabase.co";
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo";
-    const supabaseClient = supabase.createClient(S_URL, S_KEY);
+    const sb = supabase.createClient(S_URL, S_KEY);
 
-    // Data Store
-    let DB = { tests: [], packages: [], relations: [] };
-    let pricingSelection = [];
-    let compareSelection = [];
+    // Memory Store
+    let STORE = { tests: [], packages: [], relations: [] };
+    let pricingArr = [];
+    let compareArr = [];
 
-    // Initialize Data (Fetch everything at once for speed)
-    async function init() {
+    // Data Load
+    async function initSystem() {
         const [t, p, r] = await Promise.all([
-            supabaseClient.from('tests').select('*'),
-            supabaseClient.from('packages').select('*'),
-            supabaseClient.from('package_tests').select('*')
+            sb.from('tests').select('*'),
+            sb.from('packages').select('*'),
+            sb.from('package_tests').select('*')
         ]);
-        DB.tests = t.data || [];
-        DB.packages = p.data || [];
-        DB.relations = r.data || [];
-        console.log("Database Sync Ready");
+        STORE.tests = t.data || [];
+        STORE.packages = p.data || [];
+        STORE.relations = r.data || [];
+        console.log("Lab Data Sync Completed");
     }
-    init();
+    initSystem();
 
-    // Utility
-    const fmt = (num) => Number(num).toLocaleString('en-EG') + " EGP";
+    const egp = (n) => Number(n).toLocaleString('en-EG') + " EGP";
 
-    // Tab Switching
+    // Tab Logic
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
@@ -168,139 +199,142 @@
         });
     });
 
-    // PRICING SEARCH
-    document.getElementById('pricingSearch').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const results = DB.tests.filter(x => x.name.toLowerCase().includes(term)).slice(0, 15);
-        const container = document.getElementById('pricingResults');
-        container.innerHTML = term ? results.map(item => `
-            <div class="test-item" onclick="addToPricing(${item.id})">
-                <span>${item.name}</span>
-                <span class="match-badge" style="background:#e0f2fe; color:#0369a1">${fmt(item.price)}</span>
+    // --- SECTION: PRICING LOGIC ---
+    const mainInput = document.getElementById('mainSearch');
+    const mainResBox = document.getElementById('mainResults');
+
+    mainInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if(!q) { mainResBox.style.display = 'none'; return; }
+
+        const filtered = STORE.tests.filter(x => x.name.toLowerCase().includes(q)).slice(0, 10);
+        mainResBox.innerHTML = filtered.map(i => `
+            <div class="test-item" onclick="addPricingItem(${i.id})">
+                <span>${i.name}</span>
+                <span class="price-tag">${egp(i.price)}</span>
             </div>
-        `).join('') : '';
+        `).join('');
+        mainResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
-    function addToPricing(id) {
-        if(pricingSelection.find(x => x.id === id)) return;
-        pricingSelection.push(DB.tests.find(x => x.id === id));
-        updatePricingUI();
+    function addPricingItem(id) {
+        if(!pricingArr.some(x => x.id === id)) {
+            pricingArr.push(STORE.tests.find(x => x.id === id));
+            renderPricing();
+        }
+        // إخفاء فوري للمقترحات وتنظيف البحث
+        mainInput.value = '';
+        mainResBox.style.display = 'none';
+        mainInput.focus();
     }
 
-    function updatePricingUI() {
-        const list = document.getElementById('chosenList');
-        list.innerHTML = pricingSelection.map(x => `
-            <div class="sel-item">
-                <strong>${x.name}</strong>
+    function renderPricing() {
+        const list = document.getElementById('pricingList');
+        list.innerHTML = pricingArr.map(i => `
+            <div class="item-row">
+                <strong>${i.name}</strong>
                 <div>
-                    <span style="margin-left:15px;">${fmt(x.price)}</span>
-                    <button onclick="removeFromPricing(${x.id})" style="border:none; color:red; cursor:pointer; background:none;">حذف</button>
+                    <span style="margin-left:15px;">${egp(i.price)}</span>
+                    <button class="remove-btn" onclick="delPricingItem(${i.id})">حذف</button>
                 </div>
             </div>
         `).join('');
-        
-        // Calculations
-        const before = pricingSelection.reduce((a,b) => a + b.price, 0);
-        const discPerc = document.getElementById('discountInput').value;
-        const discVal = before * (discPerc/100);
-        const final = before - discVal;
-
-        document.getElementById('totalBefore').innerText = fmt(before);
-        document.getElementById('discAmount').innerText = fmt(discVal);
-        document.getElementById('totalAfter').innerText = fmt(final);
+        updateCalc();
     }
 
-    window.removeFromPricing = (id) => {
-        pricingSelection = pricingSelection.filter(x => x.id !== id);
-        updatePricingUI();
-    };
+    function updateCalc() {
+        const sub = pricingArr.reduce((s, i) => s + i.price, 0);
+        const disc = document.getElementById('discountValue').value;
+        const saved = sub * (disc/100);
+        document.getElementById('totalBefore').innerText = egp(sub);
+        document.getElementById('saveAmount').innerText = egp(saved);
+        document.getElementById('totalAfter').innerText = egp(sub - saved);
+    }
 
-    document.getElementById('discountInput').addEventListener('input', updatePricingUI);
+    window.delPricingItem = (id) => { pricingArr = pricingArr.filter(x => x.id !== id); renderPricing(); };
+    document.getElementById('discountValue').addEventListener('input', updateCalc);
 
-    // COMPARE SEARCH
-    document.getElementById('compareSearch').addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const results = DB.tests.filter(x => x.name.toLowerCase().includes(term)).slice(0, 10);
-        const container = document.getElementById('compareSearchRes');
-        container.innerHTML = term ? results.map(item => `
-            <div class="test-item" onclick="addToCompare(${item.id})">
-                <span>${item.name}</span>
-                <span style="font-size:11px; color:#3b82f6;">+ إضافة للمقارنة</span>
+    function clearAllPricing() { pricingArr = []; renderPricing(); }
+
+    // --- SECTION: COMPARE LOGIC ---
+    const compInput = document.getElementById('compSearch');
+    const compResBox = document.getElementById('compResults');
+
+    compInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if(!q) { compResBox.style.display = 'none'; return; }
+        const filtered = STORE.tests.filter(x => x.name.toLowerCase().includes(q)).slice(0, 10);
+        compResBox.innerHTML = filtered.map(i => `
+            <div class="test-item" onclick="addCompareItem(${i.id})">
+                <span>${i.name}</span>
+                <span style="color:#2563eb">+ إضافة</span>
             </div>
-        `).join('') : '';
+        `).join('');
+        compResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
-    function addToCompare(id) {
-        if(compareSelection.find(x => x.id === id)) return;
-        compareSelection.push(DB.tests.find(x => x.id === id));
-        document.getElementById('compareChosenList').innerHTML = compareSelection.map(x => `
-            <div class="sel-item">
-                <span>${x.name}</span>
-                <button onclick="removeFromCompare(${x.id})" style="border:none; color:red; cursor:pointer; background:none;">حذف</button>
+    function addCompareItem(id) {
+        if(!compareArr.some(x => x.id === id)) {
+            compareArr.push(STORE.tests.find(x => x.id === id));
+            renderCompare();
+        }
+        compInput.value = '';
+        compResBox.style.display = 'none';
+        compInput.focus();
+    }
+
+    function renderCompare() {
+        document.getElementById('compList').innerHTML = compareArr.map(i => `
+            <div class="item-row">
+                <span>${i.name}</span>
+                <button class="remove-btn" onclick="delCompItem(${i.id})">حذف</button>
             </div>
         `).join('');
     }
 
-    window.removeFromCompare = (id) => {
-        compareSelection = compareSelection.filter(x => x.id !== id);
-        addToCompare(); // Refresh list
-    };
+    window.delCompItem = (id) => { compareArr = compareArr.filter(x => x.id !== id); renderCompare(); };
 
-    // CORE COMPARISON ENGINE (Logic)
-    window.runComparison = () => {
-        if(compareSelection.length === 0) return alert("اختر تحاليل أولاً");
-        
-        const testIds = compareSelection.map(x => x.id);
-        
-        // Find how each package matches
-        const analysis = DB.packages.map(pkg => {
-            const pkgTests = DB.relations.filter(r => r.package_id === pkg.id).map(r => r.test_id);
-            const common = pkgTests.filter(id => testIds.includes(id));
-            const matchPerc = Math.round((common.length / testIds.length) * 100);
-            return { ...pkg, matchCount: common.length, percentage: matchPerc, totalPkgTests: pkgTests.length };
-        })
-        .filter(p => p.matchCount > 0)
-        .sort((a,b) => b.percentage - a.percentage || a.price - b.price);
+    function processComparison() {
+        if(!compareArr.length) return;
+        const testIds = compareArr.map(x => x.id);
+        const finalResults = STORE.packages.map(p => {
+            const rels = STORE.relations.filter(r => r.package_id === p.id).map(r => r.test_id);
+            const matches = rels.filter(id => testIds.includes(id));
+            const perc = Math.round((matches.length / testIds.length) * 100);
+            return { ...p, matchCount: matches.length, percentage: perc, totalInPkg: rels.length };
+        }).filter(x => x.matchCount > 0).sort((a,b) => b.percentage - a.percentage || a.price - b.price);
 
-        const resDiv = document.getElementById('finalComparisonResults');
-        resDiv.innerHTML = '<h2>النتائج المقترحة</h2>' + (analysis.length ? analysis.map(p => `
+        const out = document.getElementById('finalComparison');
+        out.innerHTML = `<h2 style="margin-top:20px;">أفضل العروض المتاحة</h2>` + finalResults.map(p => `
             <div class="pkg-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <h3 style="color:var(--primary)">${p.name}</h3>
-                        <small>تحتوي على ${p.matchCount} من أصل ${compareSelection.length} تحاليل مطلوبة</small>
+                        <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
+                        <small style="color:grey">تغطي ${p.matchCount} تحليلاً من طلبك</small>
                     </div>
                     <span class="match-badge">${p.percentage}% مطابقة</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
-                    <span style="font-weight:900; color:var(--green); font-size:20px;">${fmt(p.price)}</span>
-                    <span style="font-size:12px; color:#9ca3af;">إجمالي محتوى الباقة: ${p.totalPkgTests}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                    <strong style="color:var(--green); font-size:18px;">${egp(p.price)}</strong>
+                    <span style="font-size:11px; color:grey;">المحتوى الكلي: ${p.totalInPkg} تحليل</span>
                 </div>
             </div>
-        `).join('') : '<div class="card">لا توجد باقة تحتوي على هذه التحاليل.</div>');
-    };
+        `).join('');
+    }
 
-    // Copying Report
-    document.getElementById('copyBtn').addEventListener('click', () => {
-        if(!pricingSelection.length) return;
-        let t = "📋 تقرير تسعير معامل MOZMEN\n\n";
-        pricingSelection.forEach((x, i) => t += `${i+1}. ${x.name} : ${fmt(x.price)}\n`);
-        t += `\n💰 الإجمالي: ${document.getElementById('totalBefore').innerText}`;
-        t += `\n🎯 الخصم: ${document.getElementById('discountInput').value}%`;
-        t += `\n✅ الصافي النهائي: ${document.getElementById('totalAfter').innerText}`;
-        
-        navigator.clipboard.writeText(t);
-        alert("تم نسخ التقرير بنجاح");
+    function clearComparison() { compareArr = []; renderCompare(); document.getElementById('finalComparison').innerHTML = ''; }
+
+    // Report Generator
+    document.getElementById('copyReport').addEventListener('click', () => {
+        if(!pricingArr.length) return;
+        let text = "📋 فاتورة معمل MOZMEN\n\n";
+        pricingArr.forEach((x, i) => text += `${i+1}- ${x.name} (${egp(x.price)})\n`);
+        text += `\n💰 الإجمالي: ${document.getElementById('totalBefore').innerText}`;
+        text += `\n🔻 الخصم: ${document.getElementById('discountValue').value}%`;
+        text += `\n✅ الصافي: ${document.getElementById('totalAfter').innerText}`;
+        navigator.clipboard.writeText(text);
+        alert("تم نسخ التقرير");
     });
-
-    // Clear Functions
-    document.getElementById('clearPricing').addEventListener('click', () => { pricingSelection = []; updatePricingUI(); });
-    document.getElementById('clearCompare').addEventListener('click', () => { 
-        compareSelection = []; 
-        document.getElementById('compareChosenList').innerHTML = ''; 
-        document.getElementById('finalComparisonResults').innerHTML = '';
-    });
-
 </script>
 </body>
 </html>
