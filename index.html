@@ -5,88 +5,313 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MOZMEN LAB SYSTEM | الإصدار المطور</title>
     <style>
-        :root { --primary: #2563eb; --dark: #111827; --green: #059669; --bg: #f3f6fb; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: var(--bg); color: var(--dark); overflow-x: hidden; }
+        :root {
+            --primary: #2563eb;
+            --dark: #111827;
+            --green: #059669;
+            --bg: #f3f6fb;
+        }
 
-        .layout { display: flex; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
 
         /* SIDEBAR */
-        .sidebar { width: 260px; background: var(--dark); color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .logo { padding: 20px 10px; text-align: center; border-bottom: 1px solid #1f2937; margin-bottom: 15px; }
-        .logo h2 { font-size: 22px; color: #fff; text-shadow: 0 0 10px var(--primary); }
-        .logo span { font-size: 10px; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar {
+            width: 260px;
+            background: var(--dark);
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .logo {
+            padding: 20px 10px;
+            text-align: center;
+            border-bottom: 1px solid #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .logo h2 {
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .logo span {
+            font-size: 10px;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
         .tab-btn {
-            border: none; background: #1f2937; color: #fff; padding: 15px; border-radius: 12px;
-            text-align: right; cursor: pointer; font-weight: 600; transition: 0.3s;
+            border: none;
+            background: #1f2937;
+            color: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: right;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
         }
-        .tab-btn:hover, .tab-btn.active { background: var(--primary); transform: translateX(-5px); }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: var(--primary);
+            transform: translateX(-5px);
+        }
 
         /* CONTENT */
-        .content { flex: 1; padding: 25px; max-width: 1000px; margin: 0 auto; }
-        .tab-content { display: none; animation: slideIn 0.3s ease-out; }
-        .tab-content.active { display: block; }
+        .content {
+            flex: 1;
+            padding: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-        @keyframes slideIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+        .tab-content {
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
 
-        .card { background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #edf2f7; }
-        h1, h2 { margin-bottom: 15px; font-size: 20px; }
-        p { color: #6b7280; font-size: 14px; margin-bottom: 15px; }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid #edf2f7;
+        }
+
+        h1, h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
 
         /* SEARCH INPUT & RESULTS */
-        .search-group { position: relative; }
-        input[type="text"], input[type="number"] {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1;
-            font-size: 16px; outline: none; transition: 0.2s;
+        .search-group {
+            position: relative;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
 
         .results-box {
-            position: absolute; width: 100%; background: #fff; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; margin-top: 5px;
-            max-height: 300px; overflow-y: auto; border: 1px solid #e2e8f0; display: none;
+            position: absolute;
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            display: none;
         }
+
         .test-item {
-            padding: 15px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .test-item:hover { background: #f8fafc; color: var(--primary); }
-        .test-item span.price-tag { background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 8px; font-weight: 700; font-size: 14px; }
+
+        .test-item:hover {
+            background: #f8fafc;
+            color: var(--primary);
+        }
+
+        .test-item span.price-tag {
+            background: #ecfdf5;
+            color: #065f46;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
 
         /* SELECTED LIST */
-        .list-container { margin-top: 20px; }
-        .item-row {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
-            padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        .list-container {
+            margin-top: 20px;
         }
-        .remove-btn { color: #ef4444; border: none; background: none; cursor: pointer; font-weight: bold; }
+
+        .item-row {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remove-btn {
+            color: #ef4444;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
         /* STATS & BUTTONS */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
-        .stat-card { background: #f1f5f9; padding: 15px; border-radius: 12px; text-align: center; }
-        .stat-card small { display: block; color: #64748b; font-size: 12px; margin-bottom: 5px; }
-        .stat-card strong { font-size: 18px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-        .action-btns { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .btn { border: none; padding: 14px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.2s; flex: 1; min-width: 120px; }
-        .btn-blue { background: var(--primary); color: #fff; }
-        .btn-green { background: var(--green); color: #fff; }
-        .btn-dark { background: var(--dark); color: #fff; }
-        .btn:active { transform: scale(0.97); }
+        .stat-card {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card small {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card strong {
+            font-size: 18px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-blue {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-dark {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
 
         /* PACKAGE CARDS */
         .pkg-card {
-            background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; margin-top: 15px;
-            transition: 0.3s; animation: slideIn 0.4s;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 15px;
+            transition: 0.3s;
+            animation: slideIn 0.4s;
         }
-        .pkg-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .match-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
+
+        .pkg-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .match-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+        }
 
         @media (max-width: 768px) {
-            .layout { flex-direction: column; }
-            .sidebar { width: 100%; flex-direction: row; overflow-x: auto; }
-            .content { padding: 15px; }
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .content {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -101,6 +326,7 @@
         </div>
         <button class="tab-btn active" data-target="pricing-tab">💰 التسعير</button>
         <button class="tab-btn" data-target="compare-tab">🔍 البحث في الباقات</button>
+        <button class="tab-btn" data-target="complaints-tab">🩺 الشكاوى</button>
     </div>
 
     <!-- Content Area -->
@@ -159,6 +385,29 @@
             <div id="finalComparison" style="margin-bottom: 50px;"></div>
         </div>
 
+        <!-- TAB: COMPLAINTS -->
+        <div id="complaints-tab" class="tab-content">
+            <div class="card">
+                <h1>البحث داخل الشكاوى</h1>
+                <p>اختر الشكوى لمعرفة التحاليل المرتبطة بها</p>
+                <div class="search-group">
+                    <input type="text" id="complSearch" placeholder="ابحث عن شكوى..." autocomplete="off">
+                    <div id="complResults" class="results-box"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>الشكاوى المختارة</h2>
+                <div id="complList" class="list-container"></div>
+                <div class="action-btns">
+                    <button class="btn btn-blue" onclick="processComplaintTests()">عرض التحاليل المرتبطة</button>
+                    <button class="btn btn-dark" onclick="clearComplaints()">مسح</button>
+                </div>
+            </div>
+
+            <div id="finalComplaints" style="margin-bottom: 50px;"></div>
+        </div>
+
     </div>
 </div>
 
@@ -170,25 +419,40 @@
     const sb = supabase.createClient(S_URL, S_KEY);
 
     // Memory Store
-    let STORE = { tests: [], packages: [], relations: [] };
+    let STORE = {
+        tests: [],
+        packages: [],
+        relations: [],
+        complaints: [],
+        complaintRelations: []
+    };
+
     let pricingArr = [];
     let compareArr = [];
+    let complaintArr = [];
+
+    const egp = (n) => Number(n || 0).toLocaleString('en-EG') + " EGP";
 
     // Data Load
     async function initSystem() {
-        const [t, p, r] = await Promise.all([
+        const [t, p, r, c, cr] = await Promise.all([
             sb.from('tests').select('*'),
             sb.from('packages').select('*'),
-            sb.from('package_tests').select('*')
+            sb.from('package_tests').select('*'),
+            sb.from('complaints').select('*'),
+            sb.from('complaint_tests').select('*')
         ]);
+
         STORE.tests = t.data || [];
         STORE.packages = p.data || [];
         STORE.relations = r.data || [];
+        STORE.complaints = c.data || [];
+        STORE.complaintRelations = cr.data || [];
+
         console.log("Lab Data Sync Completed");
     }
-    initSystem();
 
-    const egp = (n) => Number(n).toLocaleString('en-EG') + " EGP";
+    initSystem();
 
     // Tab Logic
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -205,9 +469,12 @@
 
     mainInput.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
-        if(!q) { mainResBox.style.display = 'none'; return; }
+        if (!q) {
+            mainResBox.style.display = 'none';
+            return;
+        }
 
-        const filtered = STORE.tests.filter(x => x.name.toLowerCase().includes(q)).slice(0, 10);
+        const filtered = STORE.tests.filter(x => (x.name || '').toLowerCase().includes(q)).slice(0, 10);
         mainResBox.innerHTML = filtered.map(i => `
             <div class="test-item" onclick="addPricingItem(${i.id})">
                 <span>${i.name}</span>
@@ -218,11 +485,10 @@
     });
 
     function addPricingItem(id) {
-        if(!pricingArr.some(x => x.id === id)) {
+        if (!pricingArr.some(x => x.id === id)) {
             pricingArr.push(STORE.tests.find(x => x.id === id));
             renderPricing();
         }
-        // إخفاء فوري للمقترحات وتنظيف البحث
         mainInput.value = '';
         mainResBox.style.display = 'none';
         mainInput.focus();
@@ -243,18 +509,26 @@
     }
 
     function updateCalc() {
-        const sub = pricingArr.reduce((s, i) => s + i.price, 0);
-        const disc = document.getElementById('discountValue').value;
-        const saved = sub * (disc/100);
+        const sub = pricingArr.reduce((s, i) => s + Number(i.price || 0), 0);
+        const disc = Number(document.getElementById('discountValue').value || 0);
+        const saved = sub * (disc / 100);
+
         document.getElementById('totalBefore').innerText = egp(sub);
         document.getElementById('saveAmount').innerText = egp(saved);
         document.getElementById('totalAfter').innerText = egp(sub - saved);
     }
 
-    window.delPricingItem = (id) => { pricingArr = pricingArr.filter(x => x.id !== id); renderPricing(); };
+    window.delPricingItem = (id) => {
+        pricingArr = pricingArr.filter(x => x.id !== id);
+        renderPricing();
+    };
+
     document.getElementById('discountValue').addEventListener('input', updateCalc);
 
-    function clearAllPricing() { pricingArr = []; renderPricing(); }
+    function clearAllPricing() {
+        pricingArr = [];
+        renderPricing();
+    }
 
     // --- SECTION: COMPARE LOGIC ---
     const compInput = document.getElementById('compSearch');
@@ -262,19 +536,24 @@
 
     compInput.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
-        if(!q) { compResBox.style.display = 'none'; return; }
-        const filtered = STORE.tests.filter(x => x.name.toLowerCase().includes(q)).slice(0, 10);
+        if (!q) {
+            compResBox.style.display = 'none';
+            return;
+        }
+
+        const filtered = STORE.tests.filter(x => (x.name || '').toLowerCase().includes(q)).slice(0, 10);
         compResBox.innerHTML = filtered.map(i => `
             <div class="test-item" onclick="addCompareItem(${i.id})">
                 <span>${i.name}</span>
                 <span style="color:#2563eb">+ إضافة</span>
             </div>
         `).join('');
+
         compResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
     function addCompareItem(id) {
-        if(!compareArr.some(x => x.id === id)) {
+        if (!compareArr.some(x => x.id === id)) {
             compareArr.push(STORE.tests.find(x => x.id === id));
             renderCompare();
         }
@@ -292,86 +571,229 @@
         `).join('');
     }
 
-    window.delCompItem = (id) => { compareArr = compareArr.filter(x => x.id !== id); renderCompare(); };
+    window.delCompItem = (id) => {
+        compareArr = compareArr.filter(x => x.id !== id);
+        renderCompare();
+    };
 
     function processComparison() {
-    if (!compareArr.length) {
-        alert("يرجى إضافة تحاليل أولاً للمقارنة");
-        return;
+        if (!compareArr.length) {
+            alert("يرجى إضافة تحاليل أولاً للمقارنة");
+            return;
+        }
+
+        const testIds = compareArr.map(x => x.id);
+
+        const finalResults = STORE.packages.map(p => {
+            const rels = STORE.relations
+                .filter(r => r.package_id === p.id)
+                .map(r => r.test_id);
+
+            const matches = rels.filter(id => testIds.includes(id));
+            const missing = compareArr.filter(t => !rels.includes(t.id));
+            const perc = Math.round((matches.length / testIds.length) * 100);
+
+            return {
+                ...p,
+                matchCount: matches.length,
+                percentage: perc,
+                totalInPkg: rels.length,
+                missing: missing
+            };
+        })
+        .filter(x => x.matchCount > 0)
+        .sort((a, b) => b.percentage - a.percentage || a.price - b.price)
+        .slice(0, 5);
+
+        const out = document.getElementById('finalComparison');
+
+        if (finalResults.length === 0) {
+            out.innerHTML = `<div class="card" style="text-align:center;">لم يتم العثور على باقات مناسبة</div>`;
+            return;
+        }
+
+        out.innerHTML = `<h2 style="margin-top:20px; font-size:18px;">📉 أرخص 5 باقات توفر لك هذه التحاليل:</h2>` +
+            finalResults.map(p => `
+                <div class="pkg-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
+                            <small style="color:grey">تغطي ${p.matchCount} من أصل ${compareArr.length} تحليل</small>
+                        </div>
+                        <div style="text-align:left;">
+                            <span class="match-badge">${p.percentage}% مطابقة</span>
+                        </div>
+                    </div>
+
+                    ${p.missing.length > 0 ? `
+                        <div style="margin-top:15px; padding:8px; background:#fff1f2; border-radius:8px; font-size:12px; color:#991b1b; border:1px solid #fecaca;">
+                            <strong>❌ تنقصها:</strong> ${p.missing.map(m => m.name).join('، ')}
+                        </div>
+                    ` : `
+                        <div style="margin-top:15px; padding:8px; background:#f0fdf4; border-radius:8px; font-size:12px; color:#166534; border:1px solid #bbf7d0;">
+                            ✅ تشمل جميع التحاليل المطلوبة!
+                        </div>
+                    `}
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                        <strong style="color:var(--green); font-size:18px;">${egp(p.price)}</strong>
+                        <span style="font-size:11px; color:grey;">المحتوى الكلي للباقة: ${p.totalInPkg} تحليل</span>
+                    </div>
+                </div>
+            `).join('');
     }
 
-    const testIds = compareArr.map(x => x.id);
-
-    // حساب البيانات لكل باقة مع تحديد التحاليل الناقصة بداخلها
-    const finalResults = STORE.packages.map(p => {
-        const rels = STORE.relations.filter(r => r.package_id === p.id).map(r => r.test_id);
-        const matches = rels.filter(id => testIds.includes(id));
-        
-        // تحديد التحاليل التي اخترتها أنت ولكنها غير موجودة في هذه الباقة
-        const missing = compareArr.filter(t => !rels.includes(t.id));
-        
-        const perc = Math.round((matches.length / testIds.length) * 100);
-        return { 
-            ...p, 
-            matchCount: matches.length, 
-            percentage: perc, 
-            totalInPkg: rels.length,
-            missing: missing // إضافة التحاليل الناقصة للكائن
-        };
-    })
-    .filter(x => x.matchCount > 0) // عرض الباقات التي بها مطابقة واحدة على الأقل
-    .sort((a, b) => b.percentage - a.percentage || a.price - b.price)
-    .slice(0, 5);
-
-    const out = document.getElementById('finalComparison');
-    
-    if (finalResults.length === 0) {
-        out.innerHTML = `<div class="card" style="text-align:center;">لم يتم العثور على باقات مناسبة</div>`;
-        return;
+    function clearComparison() {
+        compareArr = [];
+        renderCompare();
+        document.getElementById('finalComparison').innerHTML = '';
     }
 
-    out.innerHTML = `<h2 style="margin-top:20px; font-size:18px;">📉 أرخص 5 باقات توفر لك هذه التحاليل:</h2>` + 
-    finalResults.map(p => `
-        <div class="pkg-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
-                    <small style="color:grey">تغطي ${p.matchCount} من أصل ${compareArr.length} تحليل</small>
+    // --- SECTION: COMPLAINTS LOGIC ---
+    const complInput = document.getElementById('complSearch');
+    const complResBox = document.getElementById('complResults');
+
+    complInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) {
+            complResBox.style.display = 'none';
+            return;
+        }
+
+        const filtered = STORE.complaints.filter(x => (x.name || '').toLowerCase().includes(q)).slice(0, 10);
+        complResBox.innerHTML = filtered.map(i => `
+            <div class="test-item" onclick="addComplaintItem(${i.id})">
+                <span>${i.name}</span>
+                <span style="color:#2563eb">+ إضافة</span>
+            </div>
+        `).join('');
+
+        complResBox.style.display = filtered.length ? 'block' : 'none';
+    });
+
+    function addComplaintItem(id) {
+        if (!complaintArr.some(x => x.id === id)) {
+            complaintArr.push(STORE.complaints.find(x => x.id === id));
+            renderComplaintList();
+        }
+        complInput.value = '';
+        complResBox.style.display = 'none';
+        complInput.focus();
+    }
+
+    function renderComplaintList() {
+        document.getElementById('complList').innerHTML = complaintArr.map(i => `
+            <div class="item-row">
+                <span>${i.name}</span>
+                <button class="remove-btn" onclick="delComplaintItem(${i.id})">حذف</button>
+            </div>
+        `).join('');
+    }
+
+    window.delComplaintItem = (id) => {
+        complaintArr = complaintArr.filter(x => x.id !== id);
+        renderComplaintList();
+    };
+
+    function processComplaintTests() {
+        if (!complaintArr.length) {
+            alert("يرجى إضافة شكوى أولاً");
+            return;
+        }
+
+        const out = document.getElementById('finalComplaints');
+
+        const results = complaintArr.map(c => {
+            const testIds = STORE.complaintRelations
+                .filter(r => r.complaint_id === c.id)
+                .map(r => r.test_id);
+
+            const tests = STORE.tests.filter(t => testIds.includes(t.id));
+            const totalPrice = tests.reduce((s, t) => s + Number(t.price || 0), 0);
+
+            return {
+                ...c,
+                tests,
+                totalPrice
+            };
+        });
+
+        out.innerHTML = results.map(c => `
+            <div class="pkg-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="font-size:17px; color:var(--primary);">${c.name}</strong><br>
+                        <small style="color:grey">عدد التحاليل المرتبطة: ${c.tests.length}</small>
+                    </div>
+                    <div style="text-align:left;">
+                        <span class="match-badge">${c.tests.length} Test(s)</span>
+                    </div>
                 </div>
-                <div style="text-align:left;">
-                    <span class="match-badge">${p.percentage}% مطابقة</span>
+
+                <div style="
+                    margin-top:15px;
+                    background:#f8fafc;
+                    border:1px solid #e2e8f0;
+                    border-radius:12px;
+                    padding:12px;
+                ">
+
+                    ${c.tests.length > 0
+                        ? c.tests.map(t => `
+                            <div style="
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:center;
+                                padding:10px 0;
+                                border-bottom:1px solid #e2e8f0;
+                                font-weight:700;
+                            ">
+                                <span>${t.name}</span>
+                                <span style="
+                                    color:#059669;
+                                    font-weight:700;
+                                ">
+                                    ${egp(t.price)}
+                                </span>
+                            </div>
+                        `).join('')
+                        : `
+                            <div style="
+                                text-align:center;
+                                color:#64748b;
+                                padding:10px;
+                            ">
+                                لا توجد تحاليل مرتبطة بهذه الشكوى
+                            </div>
+                        `
+                    }
+
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                    <strong style="color:var(--green); font-size:18px;">${egp(c.totalPrice)}</strong>
+                    <span style="font-size:11px; color:grey;">إجمالي سعر التحاليل المرتبطة</span>
                 </div>
             </div>
+        `).join('');
+    }
 
-            <!-- منطقة التحاليل الناقصة -->
-            ${p.missing.length > 0 ? `
-                <div style="margin-top:15px; padding:8px; background:#fff1f2; border-radius:8px; font-size:12px; color:#991b1b; border:1px solid #fecaca;">
-                    <strong>❌ تنقصها:</strong> ${p.missing.map(m => m.name).join('، ')}
-                </div>
-            ` : `
-                <div style="margin-top:15px; padding:8px; background:#f0fdf4; border-radius:8px; font-size:12px; color:#166534; border:1px solid #bbf7d0;">
-                    ✅ تشمل جميع التحاليل المطلوبة!
-                </div>
-            `}
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
-                <strong style="color:var(--green); font-size:18px;">${egp(p.price)}</strong>
-                <span style="font-size:11px; color:grey;">المحتوى الكلي للباقة: ${p.totalInPkg} تحليل</span>
-            </div>
-        </div>
-    `).join('');
-}
-
-    function clearComparison() { compareArr = []; renderCompare(); document.getElementById('finalComparison').innerHTML = ''; }
+    function clearComplaints() {
+        complaintArr = [];
+        renderComplaintList();
+        document.getElementById('finalComplaints').innerHTML = '';
+    }
 
     // Report Generator
     document.getElementById('copyReport').addEventListener('click', () => {
-        if(!pricingArr.length) return;
+        if (!pricingArr.length) return;
+
         let text = "📋 فاتورة معمل MOZMEN\n\n";
-        pricingArr.forEach((x, i) => text += `${i+1}- ${x.name} (${egp(x.price)})\n`);
+        pricingArr.forEach((x, i) => text += `${i + 1}- ${x.name} (${egp(x.price)})\n`);
         text += `\n💰 الإجمالي: ${document.getElementById('totalBefore').innerText}`;
-        text += `\n🔻 الخصم: ${Number(document.getElementById('discountValue').value)}%`;
+        text += `\n🔻 الخصم: ${Number(document.getElementById('discountValue').value || 0)}%`;
         text += `\n✅ الاجمالي بعد الخصم: ${document.getElementById('totalAfter').innerText}`;
+
         navigator.clipboard.writeText(text);
         alert("تم نسخ التقرير");
     });
