@@ -12,297 +12,78 @@
             --bg: #f3f6fb;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--dark);
-            overflow-x: hidden;
-        }
-
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: var(--dark);
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .logo {
-            padding: 20px 10px;
-            text-align: center;
-            border-bottom: 1px solid #1f2937;
-            margin-bottom: 15px;
-        }
-
-        .logo h2 {
-            font-size: 22px;
-            color: #fff;
-            text-shadow: 0 0 10px var(--primary);
-        }
-
-        .logo span {
-            font-size: 10px;
-            color: #60a5fa;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .tab-btn {
-            border: none;
-            background: #1f2937;
-            color: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: right;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .tab-btn:hover,
-        .tab-btn.active {
-            background: var(--primary);
-            transform: translateX(-5px);
-        }
-
-        .content {
-            flex: 1;
-            padding: 25px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .tab-content {
-            display: none;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid #edf2f7;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: var(--bg); color: var(--dark); overflow-x: hidden; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--dark); color: #fff; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .logo { padding: 20px 10px; text-align: center; border-bottom: 1px solid #1f2937; margin-bottom: 15px; }
+        .logo h2 { font-size: 22px; color: #fff; text-shadow: 0 0 10px var(--primary); }
+        .logo span { font-size: 10px; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn { border: none; background: #1f2937; color: #fff; padding: 15px; border-radius: 12px; text-align: right; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .tab-btn:hover, .tab-btn.active { background: var(--primary); transform: translateX(-5px); }
+        .content { flex: 1; padding: 25px; max-width: 1000px; margin: 0 auto; }
+        .tab-content { display: none; animation: slideIn 0.3s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: #fff; border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #edf2f7; }
         h1, h2 { margin-bottom: 15px; font-size: 20px; }
         p { color: #6b7280; font-size: 14px; margin-bottom: 15px; }
-
         .search-group { position: relative; }
-
-        input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
-            font-size: 16px;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
-        }
-
-        .results-box {
-            position: absolute;
-            width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            z-index: 100;
-            margin-top: 5px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            display: none;
-        }
-
-        .test-item {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f1f5f9;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
+        input[type="text"], input[type="number"] { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 16px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .results-box { position: absolute; width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; margin-top: 5px; max-height: 300px; overflow-y: auto; border: 1px solid #e2e8f0; display: none; }
+        .test-item { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
         .test-item:hover { background: #f8fafc; color: var(--primary); }
-
-        .test-item span.price-tag {
-            background: #ecfdf5;
-            color: #065f46;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
+        .test-item span.price-tag { background: #ecfdf5; color: #065f46; padding: 4px 8px; border-radius: 8px; font-weight: 700; font-size: 14px; }
         .list-container { margin-top: 20px; }
-
-        .item-row {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .item-row { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .remove-btn { color: #ef4444; border: none; background: none; cursor: pointer; font-weight: bold; }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
         .stat-card { background: #f1f5f9; padding: 15px; border-radius: 12px; text-align: center; }
         .stat-card small { display: block; color: #64748b; font-size: 12px; margin-bottom: 5px; }
         .stat-card strong { font-size: 18px; }
-
         .action-btns { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-
-        .btn {
-            border: none;
-            padding: 14px 25px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: 0.2s;
-            flex: 1;
-            min-width: 120px;
-        }
-
+        .btn { border: none; padding: 14px 25px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: 0.2s; flex: 1; min-width: 120px; }
         .btn-blue { background: var(--primary); color: #fff; }
         .btn-green { background: var(--green); color: #fff; }
         .btn-dark { background: var(--dark); color: #fff; }
         .btn:active { transform: scale(0.97); }
 
-        .pkg-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 18px;
-            margin-top: 15px;
-            transition: 0.3s;
-            animation: slideIn 0.4s;
-        }
-
+        /* PKG CARD */
+        .pkg-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; margin-top: 15px; transition: 0.3s; animation: slideIn 0.4s; }
         .pkg-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .match-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; }
 
-        .match-badge {
-            background: #dcfce7;
-            color: #166534;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 800;
-        }
+        /* PKG CONTENT TOGGLE */
+        .pkg-toggle-btn { background: #f1f5f9; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; color: #475569; font-weight: 600; transition: 0.2s; }
+        .pkg-toggle-btn:hover { background: #e2e8f0; }
+        .pkg-content { display: none; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .pkg-content.open { display: block; }
+        .pkg-test-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f8fafc; font-size: 13px; }
+        .pkg-test-row:last-child { border-bottom: none; }
+        .pkg-test-row.matched { color: #166534; font-weight: 700; }
+        .pkg-test-row.matched::before { content: "✅ "; }
+        .pkg-test-row.normal { color: #475569; }
 
-        /* ===== VISIT RESULT CARDS ===== */
-        .visit-result-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .visit-type-card {
-            border-radius: 14px;
-            padding: 20px;
-        }
-
-        .visit-type-card.pkg {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-        }
-
-        .visit-type-card.rx {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-        }
-
-        .visit-type-card .type-label {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
+        /* VISIT */
+        .visit-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .visit-type-card { border-radius: 14px; padding: 20px; }
+        .visit-type-card.pkg { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .visit-type-card.rx { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .visit-type-card .type-label { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
         .visit-type-card.pkg .type-label { color: #1e40af; }
         .visit-type-card.rx  .type-label { color: #166534; }
-
-        .visit-type-card .type-note {
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
-
+        .visit-type-card .type-note { font-size: 12px; margin-bottom: 12px; }
         .visit-type-card.pkg .type-note { color: #3b82f6; }
         .visit-type-card.rx  .type-note { color: #16a34a; }
-
-        .visit-type-card .type-fee {
-            font-size: 30px;
-            font-weight: 800;
-        }
-
+        .visit-type-card .type-fee { font-size: 30px; font-weight: 800; }
         .visit-type-card.pkg .type-fee { color: #1e40af; }
         .visit-type-card.rx  .type-fee { color: #166534; }
-
         .visit-type-card .type-fee span { font-size: 14px; font-weight: 400; }
+        .visit-zone-info { background: #f8fafc; border-radius: 10px; padding: 12px 15px; margin-top: 12px; font-size: 13px; color: #64748b; }
 
-        .visit-zone-info {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 12px 15px;
-            margin-top: 12px;
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        select {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
-            font-size: 16px;
-            outline: none;
-            background: #fff;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-
-        select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
-        }
+        select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 16px; outline: none; background: #fff; transition: 0.2s; cursor: pointer; }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
 
         @media (max-width: 768px) {
             .layout { flex-direction: column; }
@@ -338,7 +119,6 @@
                     <div id="mainResults" class="results-box"></div>
                 </div>
             </div>
-
             <div class="card">
                 <h2>التحاليل المطلوبة</h2>
                 <div id="pricingList" class="list-container"></div>
@@ -368,7 +148,6 @@
                     <div id="compResults" class="results-box"></div>
                 </div>
             </div>
-
             <div class="card">
                 <h2>التحاليل المضافة للمقارنة</h2>
                 <div id="compList" class="list-container"></div>
@@ -377,7 +156,6 @@
                     <button class="btn btn-dark" onclick="clearComparison()">مسح</button>
                 </div>
             </div>
-
             <div id="finalComparison" style="margin-bottom: 50px;"></div>
         </div>
 
@@ -391,7 +169,6 @@
                     <div id="complResults" class="results-box"></div>
                 </div>
             </div>
-
             <div class="card">
                 <h2>الشكاوى المختارة</h2>
                 <div id="complList" class="list-container"></div>
@@ -400,7 +177,6 @@
                     <button class="btn btn-dark" onclick="clearComplaints()">مسح</button>
                 </div>
             </div>
-
             <div id="finalComplaints" style="margin-bottom: 50px;"></div>
         </div>
 
@@ -408,29 +184,22 @@
         <div id="visits-tab" class="tab-content">
             <div class="card">
                 <h1>🚗 أسعار الزيارات</h1>
-
                 <label style="font-weight:600; display:block; margin-bottom:8px;">المحافظة</label>
                 <select id="visitGovernorate"></select>
-
                 <br><br>
-
                 <label style="font-weight:600; display:block; margin-bottom:8px;">المنطقة</label>
                 <div class="search-group">
                     <input type="text" id="visitAreaInput" placeholder="اكتب اسم المنطقة..." autocomplete="off">
                     <div id="visitAreaSuggestions" class="results-box"></div>
                 </div>
-
                 <br>
-
                 <label style="font-weight:600; display:block; margin-bottom:8px;">قيمة الطلب (جنيه)</label>
                 <input type="number" id="visitAmount" placeholder="مثال: 600" min="0">
-
                 <div class="action-btns">
                     <button class="btn btn-blue" onclick="calculateVisit()">حساب رسوم الزيارة</button>
                     <button class="btn btn-dark" onclick="clearVisit()">مسح</button>
                 </div>
             </div>
-
             <div id="visitResult" class="card" style="display:none;"></div>
         </div>
 
@@ -464,9 +233,8 @@
         STORE.complaints = c.data || [];
         STORE.complaintRelations = cr.data || [];
         STORE.visitZones = vz.data || [];
-
         loadVisitGovernorates();
-        console.log("Lab Data Sync Completed");
+        console.log(`✅ tests=${STORE.tests.length}, packages=${STORE.packages.length}, relations=${STORE.relations.length}`);
     }
 
     initSystem();
@@ -492,19 +260,13 @@
             <div class="test-item" onclick="addPricingItem(${i.id})">
                 <span>${i.name}</span>
                 <span class="price-tag">${egp(i.price)}</span>
-            </div>
-        `).join('');
+            </div>`).join('');
         mainResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
     function addPricingItem(id) {
-        if (!pricingArr.some(x => x.id === id)) {
-            pricingArr.push(STORE.tests.find(x => x.id === id));
-            renderPricing();
-        }
-        mainInput.value = '';
-        mainResBox.style.display = 'none';
-        mainInput.focus();
+        if (!pricingArr.some(x => x.id === id)) { pricingArr.push(STORE.tests.find(x => x.id === id)); renderPricing(); }
+        mainInput.value = ''; mainResBox.style.display = 'none'; mainInput.focus();
     }
 
     function renderPricing() {
@@ -515,8 +277,7 @@
                     <span style="margin-left:15px;">${egp(i.price)}</span>
                     <button class="remove-btn" onclick="delPricingItem(${i.id})">حذف</button>
                 </div>
-            </div>
-        `).join('');
+            </div>`).join('');
         updateCalc();
     }
 
@@ -545,8 +306,7 @@
             <div class="test-item" onclick="addCompareItem(${i.id})">
                 <span>${i.name}</span>
                 <span style="color:#2563eb">+ إضافة</span>
-            </div>
-        `).join('');
+            </div>`).join('');
         compResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
@@ -560,43 +320,83 @@
             <div class="item-row">
                 <span>${i.name}</span>
                 <button class="remove-btn" onclick="delCompItem(${i.id})">حذف</button>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
     window.delCompItem = (id) => { compareArr = compareArr.filter(x => x.id !== id); renderCompare(); };
 
+    function togglePkgContent(id) {
+        const el = document.getElementById('pkg-content-' + id);
+        const btn = document.getElementById('pkg-btn-' + id);
+        if (el.classList.contains('open')) {
+            el.classList.remove('open');
+            btn.innerText = '📋 عرض المحتوى';
+        } else {
+            el.classList.add('open');
+            btn.innerText = '🔼 إخفاء المحتوى';
+        }
+    }
+
     function processComparison() {
         if (!compareArr.length) { alert("يرجى إضافة تحاليل أولاً للمقارنة"); return; }
-        const testIds = compareArr.map(x => x.id);
+
+        const testIds = compareArr.map(x => Number(x.id));
+
         const finalResults = STORE.packages.map(p => {
-            const rels = STORE.relations.filter(r => r.package_id === p.id).map(r => r.test_id);
-            const matches = rels.filter(id => testIds.includes(id));
-            const missing = compareArr.filter(t => !rels.includes(t.id));
-            const perc = Math.round((matches.length / testIds.length) * 100);
-            return { ...p, matchCount: matches.length, percentage: perc, totalInPkg: rels.length, missing };
-        }).filter(x => x.matchCount > 0).sort((a, b) => b.percentage - a.percentage || a.price - b.price).slice(0, 5);
+            const relTestIds = STORE.relations
+                .filter(r => Number(r.package_id) === Number(p.id))
+                .map(r => Number(r.test_id));
+
+            const matchedIds = relTestIds.filter(id => testIds.includes(id));
+            const missing = compareArr.filter(t => !relTestIds.includes(Number(t.id)));
+            const perc = Math.round((matchedIds.length / testIds.length) * 100);
+
+            // كل تحاليل الباقة مع تمييز المطلوبة
+            const allPkgTests = STORE.tests.filter(t => relTestIds.includes(Number(t.id)));
+
+            return { ...p, matchCount: matchedIds.length, percentage: perc, totalInPkg: relTestIds.length, missing, matchedIds, allPkgTests };
+        })
+        .filter(x => x.matchCount > 0)
+        .sort((a, b) => b.percentage - a.percentage || Number(a.price) - Number(b.price))
+        .slice(0, 5);
 
         const out = document.getElementById('finalComparison');
-        if (!finalResults.length) { out.innerHTML = `<div class="card" style="text-align:center;">لم يتم العثور على باقات مناسبة</div>`; return; }
+        if (!finalResults.length) {
+            out.innerHTML = `<div class="card" style="text-align:center;">لم يتم العثور على باقات مناسبة</div>`;
+            return;
+        }
 
-        out.innerHTML = `<h2 style="margin-top:20px; font-size:18px;">📉 أرخص 5 باقات توفر لك هذه التحاليل:</h2>` +
-            finalResults.map(p => `
+        out.innerHTML = `<h2 style="margin-top:20px; font-size:18px;">📦 أفضل 5 باقات توفر لك هذه التحاليل:</h2>` +
+            finalResults.map((p, idx) => `
                 <div class="pkg-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <div>
                             <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
-                            <small style="color:grey">تغطي ${p.matchCount} من أصل ${compareArr.length} تحليل</small>
+                            <small style="color:grey">تغطي ${p.matchCount} من أصل ${compareArr.length} تحليل مطلوب</small>
                         </div>
                         <span class="match-badge">${p.percentage}% مطابقة</span>
                     </div>
+
                     ${p.missing.length > 0
-                        ? `<div style="margin-top:15px;padding:8px;background:#fff1f2;border-radius:8px;font-size:12px;color:#991b1b;border:1px solid #fecaca;"><strong>❌ تنقصها:</strong> ${p.missing.map(m => m.name).join('، ')}</div>`
-                        : `<div style="margin-top:15px;padding:8px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#166534;border:1px solid #bbf7d0;">✅ تشمل جميع التحاليل المطلوبة!</div>`
+                        ? `<div style="margin-top:12px;padding:8px;background:#fff1f2;border-radius:8px;font-size:12px;color:#991b1b;border:1px solid #fecaca;"><strong>❌ تنقصها:</strong> ${p.missing.map(m => m.name).join('، ')}</div>`
+                        : `<div style="margin-top:12px;padding:8px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#166534;border:1px solid #bbf7d0;">✅ تشمل جميع التحاليل المطلوبة!</div>`
                     }
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:15px;border-top:1px solid #eee;padding-top:10px;">
-                        <strong style="color:var(--green);font-size:18px;">${egp(p.price)}</strong>
-                        <span style="font-size:11px;color:grey;">المحتوى الكلي: ${p.totalInPkg} تحليل</span>
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;border-top:1px solid #eee;padding-top:10px;flex-wrap:wrap;gap:8px;">
+                        <div>
+                            <strong style="color:var(--green);font-size:20px;">${egp(p.price)}</strong>
+                            <span style="font-size:12px;color:#64748b;margin-right:10px;">| ${p.totalInPkg} تحليل في الباقة</span>
+                        </div>
+                        <button class="pkg-toggle-btn" id="pkg-btn-${idx}" onclick="togglePkgContent(${idx})">📋 عرض المحتوى</button>
+                    </div>
+
+                    <div class="pkg-content" id="pkg-content-${idx}">
+                        <div style="font-size:12px;color:#64748b;margin-bottom:8px;">محتوى الباقة كاملاً — التحاليل المطلوبة مميزة بـ ✅</div>
+                        ${p.allPkgTests.map(t => `
+                            <div class="pkg-test-row ${p.matchedIds.includes(Number(t.id)) ? 'matched' : 'normal'}">
+                                <span>${t.name}</span>
+                                <span style="color:#059669;font-size:12px;">${egp(t.price)}</span>
+                            </div>`).join('')}
                     </div>
                 </div>
             `).join('');
@@ -616,8 +416,7 @@
             <div class="test-item" onclick="addComplaintItem(${i.id})">
                 <span>${i.name}</span>
                 <span style="color:#2563eb">+ إضافة</span>
-            </div>
-        `).join('');
+            </div>`).join('');
         complResBox.style.display = filtered.length ? 'block' : 'none';
     });
 
@@ -631,8 +430,7 @@
             <div class="item-row">
                 <span>${i.name}</span>
                 <button class="remove-btn" onclick="delComplaintItem(${i.id})">حذف</button>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
     window.delComplaintItem = (id) => { complaintArr = complaintArr.filter(x => x.id !== id); renderComplaintList(); };
@@ -669,22 +467,19 @@
                     <strong style="color:var(--green);font-size:18px;">${egp(c.totalPrice)}</strong>
                     <span style="font-size:11px;color:grey;">إجمالي سعر التحاليل</span>
                 </div>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
 
     function clearComplaints() { complaintArr = []; renderComplaintList(); document.getElementById('finalComplaints').innerHTML = ''; }
 
-    // ===== VISITS (NEW) =====
+    // ===== VISITS =====
     function loadVisitGovernorates() {
         const govs = [...new Set(STORE.visitZones.map(x => x.governorate))];
-        document.getElementById("visitGovernorate").innerHTML =
-            govs.map(g => `<option value="${g}">${g}</option>`).join("");
+        document.getElementById("visitGovernorate").innerHTML = govs.map(g => `<option value="${g}">${g}</option>`).join("");
     }
 
     function getAreasForCurrentGov() {
-        const gov = document.getElementById("visitGovernorate").value;
-        return STORE.visitZones.filter(x => x.governorate === gov);
+        return STORE.visitZones.filter(x => x.governorate === document.getElementById("visitGovernorate").value);
     }
 
     function showAreaSuggestions(q) {
@@ -696,8 +491,7 @@
             <div class="test-item" onclick="pickVisitArea(${a.id})">
                 <span>${a.area}</span>
                 <span class="price-tag">${a.visit_fee} جنيه</span>
-            </div>
-        `).join('');
+            </div>`).join('');
         box.style.display = 'block';
     }
 
@@ -707,71 +501,29 @@
         document.getElementById("visitAreaSuggestions").style.display = 'none';
     }
 
-    document.getElementById("visitAreaInput").addEventListener('focus', () => {
-        showAreaSuggestions(document.getElementById("visitAreaInput").value);
-    });
-
-    document.getElementById("visitAreaInput").addEventListener('input', (e) => {
-        selectedVisitZone = null;
-        showAreaSuggestions(e.target.value);
-    });
-
-    document.getElementById("visitGovernorate").addEventListener('change', () => {
-        document.getElementById("visitAreaInput").value = '';
-        selectedVisitZone = null;
-        document.getElementById("visitAreaSuggestions").style.display = 'none';
-    });
-
-    document.addEventListener('click', (e) => {
-        const inp = document.getElementById("visitAreaInput");
-        const box = document.getElementById("visitAreaSuggestions");
-        if (!box.contains(e.target) && e.target !== inp) box.style.display = 'none';
-    });
+    document.getElementById("visitAreaInput").addEventListener('focus', () => showAreaSuggestions(document.getElementById("visitAreaInput").value));
+    document.getElementById("visitAreaInput").addEventListener('input', (e) => { selectedVisitZone = null; showAreaSuggestions(e.target.value); });
+    document.getElementById("visitGovernorate").addEventListener('change', () => { document.getElementById("visitAreaInput").value = ''; selectedVisitZone = null; document.getElementById("visitAreaSuggestions").style.display = 'none'; });
+    document.addEventListener('click', (e) => { const inp = document.getElementById("visitAreaInput"); const box = document.getElementById("visitAreaSuggestions"); if (!box.contains(e.target) && e.target !== inp) box.style.display = 'none'; });
 
     function calculateVisit() {
-        if (!selectedVisitZone) {
-            document.getElementById("visitAreaInput").focus();
-            alert("اختر المنطقة أولاً من القائمة");
-            return;
-        }
-
+        if (!selectedVisitZone) { document.getElementById("visitAreaInput").focus(); alert("اختر المنطقة أولاً من القائمة"); return; }
         const amount = Number(document.getElementById("visitAmount").value || 0);
         const gov = selectedVisitZone.governorate;
         const zoneFee = Number(selectedVisitZone.visit_fee);
-
-        // حساب الباقة
         let pkgFee, pkgNote;
-        if (amount >= 800) {
-            pkgFee = 0;
-            pkgNote = "الباقة فوق 800 جنيه — الزيارة مجانية ✅";
-        } else if (gov === "القاهرة" || gov === "القليوبية") {
-            pkgFee = zoneFee + 30;
-            pkgNote = "رسوم المنطقة + 30 جنيه";
-        } else {
-            pkgFee = zoneFee;
-            pkgNote = "رسوم المنطقة فقط";
-        }
-
-        // حساب الروشتة
+        if (amount >= 800) { pkgFee = 0; pkgNote = "الباقة فوق 800 جنيه — الزيارة مجانية ✅"; }
+        else if (gov === "القاهرة" || gov === "القليوبية") { pkgFee = zoneFee + 30; pkgNote = "رسوم المنطقة + 30 جنيه"; }
+        else { pkgFee = zoneFee; pkgNote = "رسوم المنطقة فقط"; }
         let rxFee, rxNote;
-        if (amount > 1000) {
-            rxFee = 50;
-            rxNote = "الروشتة فوق 1000 جنيه — رسوم ثابتة 50 جنيه";
-        } else if (amount < 200) {
-            rxFee = zoneFee + 20;
-            rxNote = "الروشتة تحت 200 جنيه — رسوم المنطقة + 20 جنيه";
-        } else {
-            rxFee = zoneFee;
-            rxNote = "رسوم المنطقة فقط";
-        }
-
+        if (amount > 1000) { rxFee = 50; rxNote = "الروشتة فوق 1000 جنيه — رسوم ثابتة 50 جنيه"; }
+        else if (amount < 200) { rxFee = zoneFee + 20; rxNote = "الروشتة تحت 200 جنيه — رسوم المنطقة + 20 جنيه"; }
+        else { rxFee = zoneFee; rxNote = "رسوم المنطقة فقط"; }
         const result = document.getElementById("visitResult");
         result.style.display = "block";
         result.innerHTML = `
             <h2>نتيجة الحساب</h2>
-            <div class="visit-zone-info">
-                📍 ${selectedVisitZone.area} — ${gov} &nbsp;|&nbsp; رسوم المنطقة الأساسية: ${zoneFee} جنيه
-            </div>
+            <div class="visit-zone-info">📍 ${selectedVisitZone.area} — ${gov} &nbsp;|&nbsp; رسوم المنطقة الأساسية: ${zoneFee} جنيه</div>
             <div class="visit-result-grid">
                 <div class="visit-type-card pkg">
                     <div class="type-label">📦 لو الطلب باقة</div>
@@ -783,8 +535,7 @@
                     <div class="type-note">${rxNote}</div>
                     <div class="type-fee">${rxFee} <span>جنيه</span></div>
                 </div>
-            </div>
-        `;
+            </div>`;
         result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
