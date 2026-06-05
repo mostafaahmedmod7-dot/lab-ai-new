@@ -153,8 +153,10 @@
                 <div style="margin-top:15px;">
                     <label style="font-weight:600;font-size:14px;display:block;margin-bottom:8px;">ترتيب النتائج</label>
                     <select id="sortOrder" style="padding:10px;font-size:14px;">
-                        <option value="match_asc">الأعلى سعراً أولاً</option>
+                        <option value="match_desc">الأعلى مطابقةً أولاً</option>
+                        <option value="match_asc">الأقل مطابقةً أولاً</option>
                         <option value="price_asc">الأرخص سعراً أولاً</option>
+                        <option value="price_desc">الأغلى سعراً أولاً</option>
                     </select>
                 </div>
                 <div class="action-btns">
@@ -357,7 +359,6 @@
             const missing = compareArr.filter(t => !relTestIds.includes(Number(t.id)));
             const perc = Math.round((matchedIds.length / testIds.length) * 100);
 
-            // كل تحاليل الباقة مع تمييز المطلوبة
             const allPkgTests = STORE.tests.filter(t => relTestIds.includes(Number(t.id)));
 
             return { ...p, matchCount: matchedIds.length, percentage: perc, totalInPkg: relTestIds.length, missing, matchedIds, allPkgTests };
@@ -365,12 +366,10 @@
         .filter(x => x.matchCount > 0);
 
         const sortOrder = document.getElementById('sortOrder').value;
-        if (sortOrder === 'price_asc')   finalResults.sort((a, b) => Number(a.price) - Number(b.price));
-        else if (sortOrder === 'price_desc') finalResults.sort((a, b) => Number(b.price) - Number(a.price));
-        else if (sortOrder === 'match_desc') finalResults.sort((a, b) => a.percentage - b.percentage || Number(a.price) - Number(b.price));
-        else finalResults.sort((a, b) => b.percentage - a.percentage || Number(a.price) - Number(b.price));
-
-        // عرض كل الباقات بدون حد
+        if (sortOrder === 'price_asc')        finalResults.sort((a, b) => Number(a.price) - Number(b.price));
+        else if (sortOrder === 'price_desc')  finalResults.sort((a, b) => Number(b.price) - Number(a.price));
+        else if (sortOrder === 'match_asc')   finalResults.sort((a, b) => a.percentage - b.percentage || Number(a.price) - Number(b.price));
+        else                                  finalResults.sort((a, b) => b.percentage - a.percentage || Number(a.price) - Number(b.price));
 
         const out = document.getElementById('finalComparison');
         if (!finalResults.length) {
@@ -383,7 +382,10 @@
                 <div class="pkg-card">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                         <div>
-                            <strong style="font-size:17px; color:var(--primary);">${p.name}</strong><br>
+                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px;">
+                                <strong style="font-size:17px; color:var(--primary);">${p.name}</strong>
+                                <span style="background:#f0fdf4; color:#065f46; padding:3px 10px; border-radius:20px; font-weight:700; font-size:14px;">${egp(p.price)}</span>
+                            </div>
                             <small style="color:grey">تغطي ${p.matchCount} من أصل ${compareArr.length} تحليل مطلوب</small>
                         </div>
                         <span class="match-badge">${p.percentage}% مطابقة</span>
