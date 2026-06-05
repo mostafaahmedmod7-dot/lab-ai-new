@@ -57,13 +57,12 @@
         /* PKG CONTENT TOGGLE */
         .pkg-toggle-btn { background: #f1f5f9; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; color: #475569; font-weight: 600; transition: 0.2s; }
         .pkg-toggle-btn:hover { background: #e2e8f0; }
-        .pkg-content { display: none; margin-top: 12px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .pkg-content { display: none; margin-top: 12px; border-top: 2px solid #e2e8f0; padding-top: 12px; }
         .pkg-content.open { display: block; }
-        .pkg-test-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f8fafc; font-size: 13px; }
-        .pkg-test-row:last-child { border-bottom: none; }
-        .pkg-test-row.matched { color: #166534; font-weight: 700; }
-        .pkg-test-row.matched::before { content: "✅ "; }
-        .pkg-test-row.normal { color: #475569; }
+        .pkg-test-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 8px; margin-bottom: 5px; font-size: 14px; font-weight: 700; }
+        .pkg-test-row.matched { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .pkg-test-row.matched::before { content: "✅  "; }
+        .pkg-test-row.normal { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; }
 
         /* VISIT */
         .visit-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
@@ -151,6 +150,13 @@
             <div class="card">
                 <h2>التحاليل المضافة للمقارنة</h2>
                 <div id="compList" class="list-container"></div>
+                <div style="margin-top:15px;">
+                    <label style="font-weight:600;font-size:14px;display:block;margin-bottom:8px;">ترتيب النتائج</label>
+                    <select id="sortOrder" style="padding:10px;font-size:14px;">
+                        <option value="match_asc">الأعلى سعراً أولاً</option>
+                        <option value="price_asc">الأرخص سعراً أولاً</option>
+                    </select>
+                </div>
                 <div class="action-btns">
                     <button class="btn btn-blue" onclick="processComparison()">عرض الباقات المناسبة</button>
                     <button class="btn btn-dark" onclick="clearComparison()">مسح</button>
@@ -356,9 +362,15 @@
 
             return { ...p, matchCount: matchedIds.length, percentage: perc, totalInPkg: relTestIds.length, missing, matchedIds, allPkgTests };
         })
-        .filter(x => x.matchCount > 0)
-        .sort((a, b) => b.percentage - a.percentage || Number(a.price) - Number(b.price))
-        .slice(0, 5);
+        .filter(x => x.matchCount > 0);
+
+        const sortOrder = document.getElementById('sortOrder').value;
+        if (sortOrder === 'price_asc')   finalResults.sort((a, b) => Number(a.price) - Number(b.price));
+        else if (sortOrder === 'price_desc') finalResults.sort((a, b) => Number(b.price) - Number(a.price));
+        else if (sortOrder === 'match_desc') finalResults.sort((a, b) => a.percentage - b.percentage || Number(a.price) - Number(b.price));
+        else finalResults.sort((a, b) => b.percentage - a.percentage || Number(a.price) - Number(b.price));
+
+        // عرض كل الباقات بدون حد
 
         const out = document.getElementById('finalComparison');
         if (!finalResults.length) {
@@ -383,10 +395,7 @@
                     }
 
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;border-top:1px solid #eee;padding-top:10px;flex-wrap:wrap;gap:8px;">
-                        <div>
-                            <strong style="color:var(--green);font-size:20px;">${egp(p.price)}</strong>
-                            <span style="font-size:12px;color:#64748b;margin-right:10px;">| ${p.totalInPkg} تحليل في الباقة</span>
-                        </div>
+                        <span style="background:#e0f2fe;color:#0369a1;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;">${p.totalInPkg} تحليل في الباقة</span>
                         <button class="pkg-toggle-btn" id="pkg-btn-${idx}" onclick="togglePkgContent(${idx})">📋 عرض المحتوى</button>
                     </div>
 
@@ -395,7 +404,7 @@
                         ${p.allPkgTests.map(t => `
                             <div class="pkg-test-row ${p.matchedIds.includes(Number(t.id)) ? 'matched' : 'normal'}">
                                 <span>${t.name}</span>
-                                <span style="color:#059669;font-size:12px;">${egp(t.price)}</span>
+                                <span style="color:#059669;font-size:13px;font-weight:800;background:#ecfdf5;padding:3px 8px;border-radius:6px;">${egp(t.price)}</span>
                             </div>`).join('')}
                     </div>
                 </div>
