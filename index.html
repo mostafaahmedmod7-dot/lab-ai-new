@@ -537,6 +537,7 @@
     function renderDrawList(list, q) {
         const container = document.getElementById('drawList');
         if (!container) return;
+        list = list.filter(p => !!p.chemist_instructions);
         if (!list.length) { container.innerHTML = `<div class="card" style="text-align:center;color:#64748b;">لا توجد نتائج</div>`; return; }
         container.innerHTML = list.map(p => {
             const nameMatch = q && (p.name || '').toLowerCase().includes(q);
@@ -554,9 +555,7 @@
                 <div style="margin-top:6px;">
                     ${matchingTests.map(t => `<div class="pkg-test-row searchhit"><span>${t.name}</span><span style="color:#059669;font-size:13px;font-weight:800;background:#ecfdf5;padding:3px 8px;border-radius:6px;">${egp(t.price)}</span></div>`).join('')}
                 </div>` : ''}
-                ${p.chemist_instructions
-                    ? `<div class="instr-box">🧪 ${p.chemist_instructions}</div>`
-                    : `<div class="instr-box missing">⚠️ لا توجد تعليمات سحب مسجلة لهذه الباقة بعد</div>`}
+                <div class="instr-box">🧪 ${p.chemist_instructions}</div>
             </div>`;
         }).join('');
     }
