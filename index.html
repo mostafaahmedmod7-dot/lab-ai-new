@@ -726,24 +726,26 @@
     }
 
     function quickAddLocation(id) {
-        const link = document.getElementById(`quickLoc-${id}`);
-        if (!navigator.geolocation) { alert('المتصفح ده مش بيدعم تحديد الموقع، استخدمي "✏️ تعديل الفرع" وحطي اللينك يدويًا'); return; }
-        const originalText = link.innerText;
-        link.innerText = '📍 جاري تحديد موقعك...';
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-            const lat = pos.coords.latitude, lng = pos.coords.longitude;
-            const location_link = `https://www.google.com/maps?q=${lat},${lng}&z=17&hl=ar`;
-            const { error } = await sb.from('branches').update({ location_link }).eq('id', id);
-            if (error) { alert('حصل خطأ أثناء الحفظ: ' + error.message); link.innerText = originalText; return; }
-            alert('تم تسجيل موقعك الحالي كموقع الفرع بنجاح ✅');
-            const { data } = await sb.from('branches').select('*');
-            STORE.branches = data || [];
-            renderBranches(STORE.branches);
-            if (document.getElementById('allBranchesMapCard').style.display !== 'none') renderAllBranchesMap();
-        }, (err) => {
-            alert('تعذر الوصول لموقعك — لازم توافقي على إذن الموقع من المتصفح. تقدري كمان تستخدمي "✏️ تعديل الفرع" وتحطي اللينك يدويًا.');
-            link.innerText = originalText;
-        }, { enableHighAccuracy: true, timeout: 10000 });
+        const b = STORE.branches.find(x => x.id === id);
+        if (!b) return;
+        const coords = extractLatLng(b.location_link);
+        if (!coords) { alert('مفيش موقع مسجل للفرع ده لسه — حطي لينك الموقع بتاعه في Supabase الأول.'); return; }
+
+        const card = document.getElementById('allBranchesMapCard');
+        const wasHidden = card.style.display === 'none';
+        card.style.display = 'block';
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        if (!allBranchesMapInstance) renderAllBranchesMap();
+        else if (wasHidden) setTimeout(() => allBranchesMapInstance.invalidateSize(), 200);
+
+        setTimeout(() => {
+            allBranchesMapInstance.setView([coords.lat, coords.lng], 17);
+            allBranchesMarkersLayer.eachLayer(m => {
+                const p = m.getLatLng();
+                if (Math.abs(p.lat - coords.lat) < 1e-6 && Math.abs(p.lng - coords.lng) < 1e-6) m.openPopup();
+            });
+        }, wasHidden ? 350 : 50);
     }
 
     function editBranchById(id) {
