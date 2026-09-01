@@ -657,13 +657,8 @@
             return;
         }
         container.innerHTML = list.map(b => {
-            const hasLink = !!(b.location_link && b.location_link.trim());
-            const bigMapLink = hasLink ? `<a class="branch-bigmap" href="${b.location_link}" target="_blank" rel="noopener">🗺️ فتح الموقع</a>` : '';
-            const copyLinkBtn = hasLink ? `<a href="#" class="branch-bigmap" onclick="copyBranchLink('${b.location_link}'); return false;">📋 نسخ اللينك للعميل</a>` : '';
-            const callLink = b.phone ? `<a class="branch-call" href="tel:${String(b.phone).replace(/\s+/g, '')}">📞 اتصال: ${b.phone}</a>` : '';
-            const editBtn = hasLink
-                ? `<a href="#" class="branch-bigmap" onclick="editBranchById(${b.id}); return false;">✏️ تعديل الفرع</a>`
-                : `<a href="#" class="branch-bigmap" id="quickLoc-${b.id}" onclick="quickAddLocation(${b.id}); return false;">📍 إضافة لينك الموقع</a>`;
+            const copyBtn = `<a href="#" class="branch-bigmap" onclick="copyBranchInfo(${b.id}); return false;">📋 نسخ</a>`;
+            const locBtn = `<a href="#" class="branch-bigmap" id="quickLoc-${b.id}" onclick="quickAddLocation(${b.id}); return false;">📍 تحديد الموقع</a>`;
             return `
             <div class="branch-card">
                 <div class="branch-head">
@@ -671,12 +666,11 @@
                     ${b.governorate ? `<span class="branch-badge">${b.governorate}</span>` : ''}
                 </div>
                 ${b.address ? `<div class="branch-info">📍 ${b.address}</div>` : ''}
+                ${b.phone ? `<div class="branch-info">📞 ${b.phone}</div>` : ''}
                 ${b.working_hours ? `<div class="branch-info">🕒 ${b.working_hours}</div>` : ''}
                 <div class="branch-actions">
-                    ${callLink}
-                    ${copyLinkBtn}
-                    ${bigMapLink}
-                    ${editBtn}
+                    ${copyBtn}
+                    ${locBtn}
                 </div>
             </div>`;
         }).join('');
@@ -787,9 +781,17 @@
         renderBranches(STORE.branches);
     }
 
-    function copyBranchLink(link) {
-        navigator.clipboard.writeText(link);
-        alert('تم نسخ لينك الموقع ✅ — دلوقتي تقدري تبعتيه للعميل مباشرة');
+    function copyBranchInfo(id) {
+        const b = STORE.branches.find(x => x.id === id);
+        if (!b) return;
+        let text = `🏢 ${b.name || 'فرع'}\n`;
+        if (b.governorate) text += `${b.governorate}\n`;
+        if (b.address) text += `📍 ${b.address}\n`;
+        if (b.phone) text += `📞 ${b.phone}\n`;
+        if (b.working_hours) text += `🕒 ${b.working_hours}\n`;
+        if (b.location_link && b.location_link.trim()) text += `🗺️ ${b.location_link}\n`;
+        navigator.clipboard.writeText(text.trim());
+        alert('تم نسخ بيانات الفرع بالكامل ✅ — دلوقتي تقدري تبعتيها للعميل مباشرة');
     }
 
     async function deleteBranch(id) {
