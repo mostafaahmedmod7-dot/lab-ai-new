@@ -122,6 +122,27 @@
         .instr-box { margin-top: 12px; padding: 14px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; font-size: 15px; font-weight: 700; color: #0c4a6e; line-height: 1.9; }
         .instr-box.missing { background: #f8fafc; border: 1px dashed #cbd5e1; color: #94a3b8; font-weight: 600; }
 
+        /* ===== BRANCHES TAB ===== */
+        .branch-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; margin-top: 15px; animation: slideIn 0.4s; }
+        .branch-card:hover { border-color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .branch-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .branch-name { font-size: 17px; font-weight: 800; color: var(--primary); }
+        .branch-badge { background: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .branch-info { font-size: 13px; color: #475569; margin-bottom: 4px; line-height: 1.7; }
+        .branch-map-wrap { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .branch-map-wrap iframe { width: 100%; height: 220px; border: 0; display: block; }
+        .branch-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .branch-actions a { text-decoration: none; flex: 1; min-width: 130px; text-align: center; padding: 10px 12px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+        .branch-call { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .branch-bigmap { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        .branch-empty { text-align: center; color: #94a3b8; padding: 20px; font-size: 13px; }
+        .branch-del { background: #fff1f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* ===== ADD BRANCH FORM ===== */
+        .field-label { font-weight: 600; display: block; margin-bottom: 6px; font-size: 14px; }
+        .field-block { margin-top: 14px; }
+        #addBranchForm { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0; }
+
         @media (max-width: 768px) {
             .layout { flex-direction: column; }
             .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; overflow-y: visible; padding: 8px; }
@@ -145,6 +166,7 @@
         <button class="tab-btn" data-target="complaints-tab">🩺 الشكاوى</button>
         <button class="tab-btn" data-target="visits-tab">🚗 الزيارات</button>
         <button class="tab-btn" data-target="drawing-tab">🧪 تعليمات السحب</button>
+        <button class="tab-btn" data-target="branches-tab">🏢 فروع Mozmen</button>
     </div>
 
     <div class="content">
@@ -259,6 +281,52 @@
             <div id="drawList"></div>
         </div>
 
+        <div id="branches-tab" class="tab-content">
+            <div class="card">
+                <h1>🏢 فروع Mozmen</h1>
+                <p>كل فروع الشركة مع العنوان والتليفون وخريطة مجانية (OpenStreetMap) لكل فرع</p>
+                <div class="search-group">
+                    <input type="text" id="branchSearch" placeholder="ابحث باسم الفرع أو المنطقة أو المحافظة..." autocomplete="off">
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;">
+                    <button class="btn btn-blue" id="toggleAddBranchBtn" onclick="openAddBranchForm()">➕ إضافة فرع جديد</button>
+                </div>
+
+                <div id="addBranchForm" style="display:none;">
+                    <div class="field-block">
+                        <label class="field-label">اسم الفرع</label>
+                        <input type="text" id="nb_name" placeholder="مثال: فرع مدينة نصر">
+                    </div>
+                    <div class="field-block">
+                        <label class="field-label">العنوان</label>
+                        <input type="text" id="nb_address" placeholder="اكتب العنوان بالتفصيل">
+                    </div>
+                    <div class="field-block">
+                        <label class="field-label">المحافظة</label>
+                        <input type="text" id="nb_gov" placeholder="مثال: القاهرة">
+                    </div>
+                    <div class="field-block">
+                        <label class="field-label">التليفون</label>
+                        <input type="text" id="nb_phone" placeholder="مثال: 01000000000">
+                    </div>
+                    <div class="field-block">
+                        <label class="field-label">ساعات العمل</label>
+                        <input type="text" id="nb_hours" placeholder="مثال: يوميًا 9ص - 11م">
+                    </div>
+                    <div class="field-block">
+                        <label class="field-label">لينك الموقع (Google Maps)</label>
+                        <p style="margin-bottom:8px;">افتحي الفرع على Google Maps، دوسي مشاركة (Share)، انسخي اللينك، والصقيه هنا</p>
+                        <input type="text" id="nb_location_link" placeholder="https://maps.app.goo.gl/...">
+                    </div>
+                    <div class="action-btns">
+                        <button class="btn btn-green" id="nb_submitBtn" onclick="submitNewBranch()">حفظ الفرع</button>
+                        <button class="btn btn-dark" onclick="toggleAddBranchForm()">إلغاء</button>
+                    </div>
+                </div>
+            </div>
+            <div id="branchList"></div>
+        </div>
+
     </div>
 </div>
 
@@ -268,20 +336,21 @@
     const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6YXd1aGtqZGdoeWZla29lemJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTEwNTYsImV4cCI6MjA5MzA2NzA1Nn0.l6yUV_FsPsvAurhKbjkxC_LkjxF6nW8lMw0i_g3A-Eo";
     const sb = supabase.createClient(S_URL, S_KEY);
 
-    let STORE = { tests: [], packages: [], relations: [], complaints: [], complaintRelations: [], visitZones: [] };
+    let STORE = { tests: [], packages: [], relations: [], complaints: [], complaintRelations: [], visitZones: [], branches: [] };
     let pricingArr = [], compareArr = [], complaintArr = [];
     let selectedVisitZone = null;
 
     const egp = (n) => Number(n || 0).toLocaleString('en-EG') + " EGP";
 
     async function initSystem() {
-        const [t, p, r, c, cr, vz] = await Promise.all([
+        const [t, p, r, c, cr, vz, br] = await Promise.all([
             sb.from('tests').select('*'),
             sb.from('packages').select('*'),
             sb.from('package_tests').select('*'),
             sb.from('complaints').select('*'),
             sb.from('complaint_tests').select('*'),
-            sb.from('visit_zones').select('*')
+            sb.from('visit_zones').select('*'),
+            sb.from('branches').select('*')
         ]);
         STORE.tests = t.data || [];
         STORE.packages = p.data || [];
@@ -289,8 +358,11 @@
         STORE.complaints = c.data || [];
         STORE.complaintRelations = cr.data || [];
         STORE.visitZones = vz.data || [];
+        STORE.branches = br.data || [];
+        if (br.error) console.warn('branches table error (create it in Supabase):', br.error.message);
         loadVisitGovernorates();
         renderDrawList(STORE.packages);
+        renderBranches(STORE.branches);
     }
 
     initSystem();
@@ -574,6 +646,159 @@
         });
         renderDrawList(filtered, q);
     });
+
+    // ===== فروع Mozmen — كل فرع مرتبط بلينك الموقع المسجل في Supabase =====
+
+    function renderBranches(list) {
+        const container = document.getElementById('branchList');
+        if (!container) return;
+        if (!list.length) {
+            container.innerHTML = `<div class="card branch-empty">لا توجد فروع مضافة بعد — استخدمي زرار "➕ إضافة فرع جديد" فوق</div>`;
+            return;
+        }
+        container.innerHTML = list.map(b => {
+            const hasLink = !!(b.location_link && b.location_link.trim());
+            const bigMapLink = hasLink ? `<a class="branch-bigmap" href="${b.location_link}" target="_blank" rel="noopener">🗺️ فتح الموقع</a>` : '';
+            const copyLinkBtn = hasLink ? `<a href="#" class="branch-bigmap" onclick="copyBranchLink('${b.location_link}'); return false;">📋 نسخ اللينك للعميل</a>` : '';
+            const callLink = b.phone ? `<a class="branch-call" href="tel:${String(b.phone).replace(/\s+/g, '')}">📞 اتصال: ${b.phone}</a>` : '';
+            const editBtn = hasLink
+                ? `<a href="#" class="branch-bigmap" onclick="editBranchById(${b.id}); return false;">✏️ تعديل الفرع</a>`
+                : `<a href="#" class="branch-bigmap" id="quickLoc-${b.id}" onclick="quickAddLocation(${b.id}); return false;">📍 إضافة لينك الموقع</a>`;
+            return `
+            <div class="branch-card">
+                <div class="branch-head">
+                    <span class="branch-name">🏢 ${b.name || 'فرع'}</span>
+                    ${b.governorate ? `<span class="branch-badge">${b.governorate}</span>` : ''}
+                </div>
+                ${b.address ? `<div class="branch-info">📍 ${b.address}</div>` : ''}
+                ${b.working_hours ? `<div class="branch-info">🕒 ${b.working_hours}</div>` : ''}
+                <div class="branch-actions">
+                    ${callLink}
+                    ${copyLinkBtn}
+                    ${bigMapLink}
+                    ${editBtn}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    const branchSearchInput = document.getElementById('branchSearch');
+    branchSearchInput.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        if (!q) { renderBranches(STORE.branches); return; }
+        const filtered = STORE.branches.filter(b =>
+            (b.name || '').toLowerCase().includes(q) ||
+            (b.address || '').toLowerCase().includes(q) ||
+            (b.governorate || '').toLowerCase().includes(q)
+        );
+        renderBranches(filtered);
+    });
+
+    // ===== إضافة/حذف فرع من داخل الصفحة (من غير الدخول على Supabase) =====
+
+    let nb_editingId = null;
+
+    function openAddBranchForm() {
+        const el = document.getElementById('addBranchForm');
+        if (el.style.display === 'block') { el.style.display = 'none'; resetBranchForm(); return; }
+        resetBranchForm();
+        el.style.display = 'block';
+    }
+
+    function toggleAddBranchForm() {
+        const el = document.getElementById('addBranchForm');
+        const willOpen = (el.style.display === 'none' || !el.style.display);
+        el.style.display = willOpen ? 'block' : 'none';
+        if (!willOpen) resetBranchForm();
+    }
+
+    function resetBranchForm() {
+        nb_editingId = null;
+        document.getElementById('nb_name').value = '';
+        document.getElementById('nb_address').value = '';
+        document.getElementById('nb_gov').value = '';
+        document.getElementById('nb_phone').value = '';
+        document.getElementById('nb_hours').value = '';
+        document.getElementById('nb_location_link').value = '';
+        document.getElementById('nb_submitBtn').innerText = 'حفظ الفرع';
+    }
+
+    function quickAddLocation(id) {
+        const link = document.getElementById(`quickLoc-${id}`);
+        if (!navigator.geolocation) { alert('المتصفح ده مش بيدعم تحديد الموقع، استخدمي "✏️ تعديل الفرع" وحطي اللينك يدويًا'); return; }
+        const originalText = link.innerText;
+        link.innerText = '📍 جاري تحديد موقعك...';
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude, lng = pos.coords.longitude;
+            const location_link = `https://www.google.com/maps?q=${lat},${lng}&z=17&hl=ar`;
+            const { error } = await sb.from('branches').update({ location_link }).eq('id', id);
+            if (error) { alert('حصل خطأ أثناء الحفظ: ' + error.message); link.innerText = originalText; return; }
+            alert('تم تسجيل موقعك الحالي كموقع الفرع بنجاح ✅');
+            const { data } = await sb.from('branches').select('*');
+            STORE.branches = data || [];
+            renderBranches(STORE.branches);
+        }, (err) => {
+            alert('تعذر الوصول لموقعك — لازم توافقي على إذن الموقع من المتصفح. تقدري كمان تستخدمي "✏️ تعديل الفرع" وتحطي اللينك يدويًا.');
+            link.innerText = originalText;
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+
+    function editBranchById(id) {
+        const b = STORE.branches.find(x => x.id === id);
+        if (!b) return;
+        nb_editingId = id;
+        document.getElementById('nb_name').value = b.name || '';
+        document.getElementById('nb_address').value = b.address || '';
+        document.getElementById('nb_gov').value = b.governorate || '';
+        document.getElementById('nb_phone').value = b.phone || '';
+        document.getElementById('nb_hours').value = b.working_hours || '';
+        document.getElementById('nb_location_link').value = b.location_link || '';
+        document.getElementById('nb_submitBtn').innerText = 'تحديث الفرع';
+        document.getElementById('addBranchForm').style.display = 'block';
+        document.getElementById('addBranchForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function submitNewBranch() {
+        const name = document.getElementById('nb_name').value.trim();
+        const address = document.getElementById('nb_address').value.trim();
+        const governorate = document.getElementById('nb_gov').value.trim();
+        const phone = document.getElementById('nb_phone').value.trim();
+        const working_hours = document.getElementById('nb_hours').value.trim();
+        const location_link = document.getElementById('nb_location_link').value.trim();
+        if (!name) { alert('اكتبي اسم الفرع على الأقل'); document.getElementById('nb_name').focus(); return; }
+
+        const payload = { name, address, governorate, phone, working_hours, location_link };
+
+        const { error } = nb_editingId
+            ? await sb.from('branches').update(payload).eq('id', nb_editingId)
+            : await sb.from('branches').insert(payload);
+
+        if (error) {
+            alert('حصل خطأ أثناء الحفظ:\n' + error.message + '\n\nلو الرسالة بتقول "column location_link does not exist"، لازم تضيفي العمود ده لجدول branches في Supabase مرة واحدة بس (شوفي الكود اللي بعتهولك).\n\nلو الرسالة بتقول "row-level security"، لازم تفعّلي صلاحية الإضافة/التعديل لجدول branches في Supabase مرة واحدة بس.');
+            return;
+        }
+
+        alert(nb_editingId ? 'تم تحديث بيانات الفرع بنجاح ✅' : 'تمت إضافة الفرع بنجاح ✅');
+        resetBranchForm();
+        toggleAddBranchForm();
+
+        const { data } = await sb.from('branches').select('*');
+        STORE.branches = data || [];
+        renderBranches(STORE.branches);
+    }
+
+    function copyBranchLink(link) {
+        navigator.clipboard.writeText(link);
+        alert('تم نسخ لينك الموقع ✅ — دلوقتي تقدري تبعتيه للعميل مباشرة');
+    }
+
+    async function deleteBranch(id) {
+        if (!confirm('متأكدة إنك عايزة تحذفي الفرع ده؟')) return;
+        const { error } = await sb.from('branches').delete().eq('id', id);
+        if (error) { alert('حصل خطأ أثناء الحذف: ' + error.message); return; }
+        STORE.branches = STORE.branches.filter(b => b.id !== id);
+        renderBranches(STORE.branches);
+    }
 </script>
 </body>
 </html>
